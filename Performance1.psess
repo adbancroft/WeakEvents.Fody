@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<VSPerformanceSession Version="1.00">
+  <Options>
+    <Solution>Fody.WeakEvents.sln</Solution>
+    <CollectionMethod>Instrumentation</CollectionMethod>
+    <AllocationMethod>None</AllocationMethod>
+    <AddReport>true</AddReport>
+    <ResourceBasedAnalysisSelected>true</ResourceBasedAnalysisSelected>
+    <UniqueReport>Timestamp</UniqueReport>
+    <SamplingMethod>Cycles</SamplingMethod>
+    <CycleCount>10000000</CycleCount>
+    <PageFaultCount>10</PageFaultCount>
+    <SysCallCount>10</SysCallCount>
+    <SamplingCounter Name="" ReloadValue="00000000000f4240" DisplayName="" />
+    <RelocateBinaries>false</RelocateBinaries>
+    <HardwareCounters EnableHWCounters="false" />
+    <EtwSettings />
+    <PdhSettings>
+      <PdhCountersEnabled>false</PdhCountersEnabled>
+      <PdhCountersRate>500</PdhCountersRate>
+      <PdhCounters>
+        <PdhCounter>\Memory\Pages/sec</PdhCounter>
+        <PdhCounter>\PhysicalDisk(_Total)\Avg. Disk Queue Length</PdhCounter>
+        <PdhCounter>\Processor(_Total)\% Processor Time</PdhCounter>
+      </PdhCounters>
+    </PdhSettings>
+  </Options>
+  <ExcludeSmallFuncs>true</ExcludeSmallFuncs>
+  <InteractionProfilingEnabled>false</InteractionProfilingEnabled>
+  <JScriptProfilingEnabled>false</JScriptProfilingEnabled>
+  <PreinstrumentEvent>
+    <InstrEventExclude>false</InstrEventExclude>
+  </PreinstrumentEvent>
+  <PostinstrumentEvent>
+    <InstrEventExclude>false</InstrEventExclude>
+  </PostinstrumentEvent>
+  <Binaries>
+    <ProjBinary>
+      <Path>WeakEventPerformanceTester\obj\Release\WeakEventPerformanceTester.exe</Path>
+      <ArgumentTimestamp>01/01/0001 00:00:00</ArgumentTimestamp>
+      <Instrument>true</Instrument>
+      <Sample>true</Sample>
+      <ExternalWebsite>false</ExternalWebsite>
+      <InteractionProfilingEnabled>false</InteractionProfilingEnabled>
+      <IsLocalJavascript>false</IsLocalJavascript>
+      <IsWindowsStoreApp>false</IsWindowsStoreApp>
+      <IsWWA>false</IsWWA>
+      <LaunchProject>true</LaunchProject>
+      <OverrideProjectSettings>false</OverrideProjectSettings>
+      <LaunchMethod>Executable</LaunchMethod>
+      <ExecutablePath>WeakEventPerformanceTester\bin\Release\WeakEventPerformanceTester.exe</ExecutablePath>
+      <StartupDirectory>WeakEventPerformanceTester\bin\Release\</StartupDirectory>
+      <Arguments>
+      </Arguments>
+      <NetAppHost>IIS</NetAppHost>
+      <NetBrowser>InternetExplorer</NetBrowser>
+      <ExcludeSmallFuncs>true</ExcludeSmallFuncs>
+      <JScriptProfilingEnabled>false</JScriptProfilingEnabled>
+      <PreinstrumentEvent>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PreinstrumentEvent>
+      <PostinstrumentEvent>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PostinstrumentEvent>
+      <ProjRef>{1AB0F348-23EA-4B01-AA1A-38BD4DD108A7}|WeakEventPerformanceTester\WeakEventPerformanceTester.csproj</ProjRef>
+      <ProjPath>WeakEventPerformanceTester\WeakEventPerformanceTester.csproj</ProjPath>
+      <ProjName>WeakEventPerformanceTester</ProjName>
+    </ProjBinary>
+    <ProjBinary>
+      <Path>Fody.WeakEvents.Runtime\obj\Release\Fody.WeakEvents.Runtime.dll</Path>
+      <ArgumentTimestamp>01/01/0001 00:00:00</ArgumentTimestamp>
+      <Instrument>true</Instrument>
+      <Sample>true</Sample>
+      <ExternalWebsite>false</ExternalWebsite>
+      <InteractionProfilingEnabled>false</InteractionProfilingEnabled>
+      <IsLocalJavascript>false</IsLocalJavascript>
+      <IsWindowsStoreApp>false</IsWindowsStoreApp>
+      <IsWWA>false</IsWWA>
+      <LaunchProject>true</LaunchProject>
+      <OverrideProjectSettings>false</OverrideProjectSettings>
+      <LaunchMethod>Executable</LaunchMethod>
+      <StartupDirectory>Fody.WeakEvents.Runtime\bin\Release\</StartupDirectory>
+      <Arguments>
+      </Arguments>
+      <NetAppHost>IIS</NetAppHost>
+      <NetBrowser>InternetExplorer</NetBrowser>
+      <ExcludeSmallFuncs>true</ExcludeSmallFuncs>
+      <JScriptProfilingEnabled>false</JScriptProfilingEnabled>
+      <PreinstrumentEvent>
+        <InstrEventProgram>
+        </InstrEventProgram>
+        <InstrEventArguments>
+        </InstrEventArguments>
+        <InstrEventDescription>
+        </InstrEventDescription>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PreinstrumentEvent>
+      <PostinstrumentEvent>
+        <InstrEventProgram>C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\sn.exe</InstrEventProgram>
+        <InstrEventArguments>  -Ra D:\Dev\Kingdom\playground\abancroft\Fody.WeakEvents\Fody.WeakEvents.Runtime\obj\Release\Fody.WeakEvents.Runtime.dll D:\Dev\Kingdom\playground\abancroft\Fody.WeakEvents\Fody.WeakEvents.Runtime\Fody.WeakEvents.Runtime.snk</InstrEventArguments>
+        <InstrEventDescription>
+        </InstrEventDescription>
+        <InstrEventExclude>false</InstrEventExclude>
+      </PostinstrumentEvent>
+      <ProjRef>{8F8B79B0-DD65-46D7-A685-34E8242838E8}|Fody.WeakEvents.Runtime\Fody.WeakEvents.Runtime.csproj</ProjRef>
+      <ProjPath>Fody.WeakEvents.Runtime\Fody.WeakEvents.Runtime.csproj</ProjPath>
+      <ProjName>Fody.WeakEvents.Runtime</ProjName>
+    </ProjBinary>
+  </Binaries>
+  <Reports>
+    <Report>
+      <Path>WeakEventPerformanceTester150615.vsp</Path>
+    </Report>
+    <Report>
+      <Path>WeakEventPerformanceTester150616.vsp</Path>
+    </Report>
+  </Reports>
+  <Launches>
+    <ProjBinary>
+      <Path>:PB:{1AB0F348-23EA-4B01-AA1A-38BD4DD108A7}|WeakEventPerformanceTester\WeakEventPerformanceTester.csproj</Path>
+    </ProjBinary>
+  </Launches>
+</VSPerformanceSession>
