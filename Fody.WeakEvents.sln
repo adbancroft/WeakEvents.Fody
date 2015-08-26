@@ -12,10 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeakEventPerformanceTester", "WeakEventPerformanceTester\WeakEventPerformanceTester.csproj", "{1AB0F348-23EA-4B01-AA1A-38BD4DD108A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{489E43AE-FCA8-4EFB-BCA3-952D285B9816}"
-	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
-		Performance2.psess = Performance2.psess
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Assemblies", "Test Assemblies", "{BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}"
 EndProject
@@ -30,42 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInterfaces", "TestInterfaces\TestInterfaces.csproj", "{73236FCB-8DFA-4E2E-9C97-353051CD8A1A}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 10
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://v-ushm2ptfsap01:8080/tfs/smtcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = WeakEventPerformanceTester\\WeakEventPerformanceTester.csproj
-		SccProjectName1 = WeakEventPerformanceTester
-		SccLocalPath1 = WeakEventPerformanceTester
-		SccProjectUniqueName2 = TestAssemblies\\ReferenceAssembly\\ReferenceAssembly.csproj
-		SccProjectTopLevelParentUniqueName2 = Fody.WeakEvents.sln
-		SccProjectName2 = TestAssemblies/ReferenceAssembly
-		SccLocalPath2 = TestAssemblies\\ReferenceAssembly
-		SccProjectUniqueName3 = WeakEvents\\WeakEvents.csproj
-		SccProjectName3 = WeakEvents
-		SccLocalPath3 = WeakEvents
-		SccProjectUniqueName4 = WeakEvents.Fody.Test\\WeakEvents.Fody.Test.csproj
-		SccProjectName4 = WeakEvents.Fody.Test
-		SccLocalPath4 = WeakEvents.Fody.Test
-		SccProjectUniqueName5 = WeakEvents.Runtime\\WeakEvents.Runtime.csproj
-		SccProjectName5 = WeakEvents.Runtime
-		SccLocalPath5 = WeakEvents.Runtime
-		SccProjectUniqueName6 = WeakEvents.Fody\\WeakEvents.Fody.csproj
-		SccProjectName6 = WeakEvents.Fody
-		SccLocalPath6 = WeakEvents.Fody
-		SccProjectUniqueName7 = TestAssemblies\\AssemblyToProcessDotNet4\\AssemblyToProcessDotNet4.csproj
-		SccProjectTopLevelParentUniqueName7 = Fody.WeakEvents.sln
-		SccProjectName7 = TestAssemblies/AssemblyToProcessDotNet4
-		SccLocalPath7 = TestAssemblies\\AssemblyToProcessDotNet4
-		SccProjectUniqueName8 = WeakEvents.Runtime.Test\\WeakEvents.Runtime.Test.csproj
-		SccProjectName8 = WeakEvents.Runtime.Test
-		SccLocalPath8 = WeakEvents.Runtime.Test
-		SccProjectUniqueName9 = TestInterfaces\\TestInterfaces.csproj
-		SccProjectTopLevelParentUniqueName9 = Fody.WeakEvents.sln
-		SccProjectName9 = TestInterfaces
-		SccLocalPath9 = TestInterfaces
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -115,8 +75,5 @@ Global
 		{5A323129-F8E7-4CD4-9381-72B397E8F471} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
 		{BAB6D718-E60B-4833-B968-F5B9F86B0063} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
 		{73236FCB-8DFA-4E2E-9C97-353051CD8A1A} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
