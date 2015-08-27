@@ -5,6 +5,7 @@ using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using WeakEvents.Fody.IlEmit;
 
 namespace WeakEvents.Fody
 {
@@ -12,10 +13,7 @@ namespace WeakEvents.Fody
     {
         private ModuleDefinition _moduleDef;
         private ILogger _logger;
-        private DelegateConvertWeaver _delegateCastWeaver;
 
-        // Delegate.Remove()
-        private MethodReference _delegateRemoveMethodRef;
         // CompilerGeneratedAttribute
         private CustomAttribute _compilerGeneratedAttribute;
         // WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<T>()
@@ -31,9 +29,7 @@ namespace WeakEvents.Fody
         {
             _moduleDef = moduleDef;
             _logger = logger;
-            _delegateCastWeaver = new DelegateConvertWeaver(moduleDef);
 
-            _delegateRemoveMethodRef = LoadDelegateRemoveMethodDefinition(moduleDef);
             _compilerGeneratedAttribute = LoadCompilerGeneratedAttribute(moduleDef);
             _openMakeWeakT = LoadOpenMakeWeakT(moduleDef);
             _openFindWeakT = LoadOpenFindWeakT(moduleDef);
@@ -69,98 +65,73 @@ namespace WeakEvents.Fody
 
         private void ProcessRemoveMethod(EventDefinition eventt, FieldReference eventDelegate)
         {
-            var makeWeak = WeaveFindWeakCall(eventt.RemoveMethod, eventDelegate);
+            var weakEventHandler = CreateVariable(eventt.RemoveMethod, eventDelegate.FieldType);
+            var makeWeak = WeaveFindWeakCall(eventt.RemoveMethod, eventDelegate, weakEventHandler);
+            int oldCodeIndex = InsertInstructions(eventt.RemoveMethod, makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
             var instructions = eventt.RemoveMethod.Body.Instructions;
-            for (int i = makeWeak.Item2; i < instructions.Count; i++)
+            for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
                 if (instructions[i].OpCode.Code.Equals(Code.Ldarg_1))
                 {
-                    instructions[i] = Instruction.Create(OpCodes.Ldloc, makeWeak.Item1);
+                    instructions[i] = Instruction.Create(OpCodes.Ldloc, weakEventHandler);
                 }
             }
         }
 
         // <event type> b = (<event type>)FindWeak(<source delegate>, (EventHandler< eventargsType >)value);
-        private Tuple<VariableDefinition, int> WeaveFindWeakCall(MethodDefinition method, FieldReference eventDelegate)
+        private IlEmitter WeaveFindWeakCall(MethodDefinition method, FieldReference eventDelegate, VariableDefinition weakEventHandler)
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
 
-            var instructions = method.Body.Instructions;
-            int insertPoint = 0;
+            var findWeakParams = method.Concat(method.LoadField(eventDelegate), method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
+            var callFindWeak = method.Call(_openFindWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), findWeakParams);
+            var weakHandler = method.DelegateConvert(callFindWeak, eventDelegate.FieldType);
 
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                                         ^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldarg_0)); insertPoint++;
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                                              ^^^^^^^^^^^^^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldfld, eventDelegate)); insertPoint++;
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                                                                                                ^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldarg_1)); insertPoint++;
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            insertPoint = _delegateCastWeaver.InsertChangeTypeCall(instructions, insertPoint, closedEventHandlerT);
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                                ^^^^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Call, _openFindWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]))); insertPoint++;
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            //                  ^^^^^^^^^^^^^^
-            insertPoint = _delegateCastWeaver.InsertChangeTypeCall(instructions, insertPoint, eventDelegate.FieldType);
-            // <event type> b = (<event type>)FindWeak(this.<source delegate>, (EventHandler< eventargsType >)value);
-            // ^^^^^^^^^^^^^^
-            return InsertVariableStorage(method, insertPoint, eventDelegate.FieldType);
+            return weakHandler.Store(weakEventHandler);
+        }
+
+        private static int InsertInstructions(MethodDefinition method, IlEmitter weakHandler, int insertPoint)
+        {
+            foreach (var i in weakHandler.Emit())
+            {
+                method.Body.Instructions.Insert(insertPoint, i);
+                ++insertPoint;
+            }
+            return insertPoint;
         }
 
         private void ProcessAddMethod(EventDefinition eventt, FieldReference eventDelegate)
         {
-            var makeWeak = WeaveMakeWeakCall(eventt.AddMethod, eventDelegate, AddUnsubscribeMethodForEvent(eventt, eventDelegate));
+            var weakEventHandler = CreateVariable(eventt.AddMethod, eventDelegate.FieldType);
+            var makeWeak = WeaveMakeWeakCall(eventt.AddMethod, eventDelegate, AddUnsubscribeMethodForEvent(eventt, eventDelegate), weakEventHandler);
+            int oldCodeIndex = InsertInstructions(eventt.AddMethod, makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
             var instructions = eventt.AddMethod.Body.Instructions;
-            for (int i = makeWeak.Item2; i < instructions.Count; i++)
+            for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
                 if (instructions[i].OpCode.Code.Equals(Code.Ldarg_1))
                 {
-                    instructions[i] = Instruction.Create(OpCodes.Ldloc, makeWeak.Item1);
+                    instructions[i] = Instruction.Create(OpCodes.Ldloc, weakEventHandler);
                 }
             }
         }
 
         // Wrap the method parameter in a weak event handler and store in a variable.
         // i.e. <event type> b = (EventHandler)MakeWeak((EventHandler< eventargsType >)value, new Action<(EventHandler< eventargsType >)>(this.<woven unsubscribe action>));
-        private Tuple<VariableDefinition, int> WeaveMakeWeakCall(MethodDefinition method, FieldReference eventDelegate, MethodDefinition unsubscribe)
+        private IlEmitter WeaveMakeWeakCall(MethodDefinition method, FieldReference eventDelegate, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
 
-            var instructions = method.Body.Instructions;
-            int insertPoint = 0;
+            var unsubscribeAction = method.NewObject(_openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
+            var genericHandler = method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT);
+            var makeWeakParams = method.Concat(genericHandler, unsubscribeAction);
+            var genericWeakHandler = method.Call(_openMakeWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), makeWeakParams);
+            var weakHandler = method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType);
 
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                                                        ^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldarg_1)); insertPoint++;
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            insertPoint = _delegateCastWeaver.InsertChangeTypeCall(instructions, insertPoint, closedEventHandlerT);
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                                                                                                         ^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldarg_0)); insertPoint++;
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Ldftn, unsubscribe)); insertPoint++;
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Newobj, _openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT))); insertPoint++;
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                                ^^^^^^^^
-            instructions.Insert(insertPoint, Instruction.Create(OpCodes.Call, _openMakeWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]))); insertPoint++;
-            // <event type> b = (<event type>)MakeWeak((EventHandler< eventargsType >)value, new Action<EventHandler< eventargsType >>(this.<woven unsubscribe action>));
-            //                  ^^^^^^^^^^^^^^
-            insertPoint = _delegateCastWeaver.InsertChangeTypeCall(instructions, insertPoint, eventDelegate.FieldType);
-            // <event type> b = MakeWeak(value, new Action<<event type>>(this.<woven unsubscribe action>));
-            // ^^^^^^^^^^^^^^^^
-            return InsertVariableStorage(method, insertPoint, eventDelegate.FieldType);
+            return weakHandler.Store(weakEventHandler);
         }
 
         // Addes a new method to the class that can unsubscribe an event handler from the event delegate
@@ -177,47 +148,40 @@ namespace WeakEvents.Fody
 
             // private void <event name>_Weak_Unsubscribe(EventHandler< eventargsType > weh)
             string unsubscribeMethodName = string.Format("<{0}>_Weak_Unsubscribe", eventt.AddMethod.Name);
-            MethodDefinition unsubscribe = new MethodDefinition(unsubscribeMethodName, MethodAttributes.Private | MethodAttributes.HideBySig, _moduleDef.TypeSystem.Void);
+            MethodDefinition unsubscribe = new MethodDefinition(unsubscribeMethodName, GetUnsubscribeMethodAttributes(eventt), _moduleDef.TypeSystem.Void);
             unsubscribe.Parameters.Add(new ParameterDefinition(closedEventHandlerT));
 
             // [CompilerGenerated]
             unsubscribe.CustomAttributes.Add(_compilerGeneratedAttribute);
 
-            var instructions = unsubscribe.Body.Instructions;
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            //                                                     ^^^^^^^^^^^^^^^^^^
-            instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-            instructions.Add(Instruction.Create(OpCodes.Dup));
-            instructions.Add(Instruction.Create(OpCodes.Ldfld, eventDelegate));
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            //                                                                                       ^^^
-            instructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            //                                                                         ^^^^^^^^^^^^^^
-            _delegateCastWeaver.AddChangeTypeCall(instructions, eventDelegate.FieldType);
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            //                                     ^^^^^^^^^^^^^^^
-            instructions.Add(Instruction.Create(OpCodes.Call, _delegateRemoveMethodRef));
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            //                      ^^^^^^^^^^^^^^
-            _delegateCastWeaver.AddChangeTypeCall(instructions, eventDelegate.FieldType);
-            // this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
-            // ^^^^^^^^^^^^^^^^^^^^
-            instructions.Add(Instruction.Create(OpCodes.Stfld, eventDelegate));
-
-            instructions.Add(Instruction.Create(OpCodes.Ret));
             eventt.DeclaringType.Methods.Add(unsubscribe);
+
+            var weakHandler = unsubscribe.DelegateConvert(unsubscribe.LoadMethod1stArg(), eventDelegate.FieldType);
+            var removeFromFieldDelegate = unsubscribe.CallDelegateRemove(unsubscribe.LoadField(eventDelegate), weakHandler);
+            var compatibleHandler = unsubscribe.DelegateConvert(removeFromFieldDelegate, eventDelegate.FieldType);
+            var instructions = unsubscribe.StoreField(compatibleHandler, eventDelegate).Return();
+
+            foreach (var i in instructions.Emit())
+            {
+                unsubscribe.Body.Instructions.Add(i);
+            }
 
             return unsubscribe;
         }
 
-        private Tuple<VariableDefinition, int> InsertVariableStorage(MethodDefinition method, int insertIndex, TypeReference variableType)
+        private static MethodAttributes GetUnsubscribeMethodAttributes(EventDefinition eventt)
+        {
+            var attributes = MethodAttributes.Private | MethodAttributes.HideBySig;
+            if (eventt.AddMethod.IsStatic)
+                attributes = attributes | MethodAttributes.Static;
+            return attributes;
+        }
+
+        private static VariableDefinition CreateVariable(MethodDefinition method, TypeReference variableType)
         {
             var variable = new VariableDefinition(variableType);
             method.Body.Variables.Add(variable);
-            method.Body.Instructions.Insert(insertIndex, Instruction.Create(OpCodes.Stloc, variable)); insertIndex++;
-
-            return Tuple.Create(variable, insertIndex);
+            return variable;
         }
 
         private GenericInstanceType GetEquivalentGenericEventHandler(FieldReference eventDelegate)
@@ -227,18 +191,6 @@ namespace WeakEvents.Fody
         }
 
         #region Static type & method loaders
-
-        private static MethodReference LoadDelegateRemoveMethodDefinition(ModuleDefinition moduleDef)
-        {
-            var delegateReference = moduleDef.Import(typeof(System.Delegate));
-            var delegateDefinition = delegateReference.Resolve();
-            var methodDefinition = delegateDefinition.Methods
-                .Single(x =>
-                    x.Name == "Remove" &&
-                    x.Parameters.Count == 2 &&
-                    x.Parameters.All(p => p.ParameterType == delegateDefinition));
-            return moduleDef.Import(methodDefinition);
-        }
 
         private static CustomAttribute LoadCompilerGeneratedAttribute(ModuleDefinition moduleDef)
         {

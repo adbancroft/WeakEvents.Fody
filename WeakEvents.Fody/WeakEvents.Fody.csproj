@@ -64,8 +64,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
-    <Compile Include="DelegateConvertWeaver.cs" />
+    <Compile Include="IlEmit\EmitCall.cs" />
+    <Compile Include="IlEmit\EmitConcat.cs" />
+    <Compile Include="IlEmit\EmitDelegateConvert.cs" />
+    <Compile Include="IlEmit\EmitDelegateRemove.cs" />
     <Compile Include="EventDefinitionExtensions.cs" />
+    <Compile Include="IlEmit\EmitFieldLoad.cs" />
+    <Compile Include="IlEmit\EmitFieldStore.cs" />
+    <Compile Include="IlEmit\EmitLoadMethod.cs" />
+    <Compile Include="IlEmit\EmitLoadMethod1stArg.cs" />
+    <Compile Include="IlEmit\EmitNewObject.cs" />
+    <Compile Include="IlEmit\EmitReturn.cs" />
+    <Compile Include="IlEmit\EmitStoreVariable.cs" />
+    <Compile Include="IlEmit\EmptyEmitter.cs" />
+    <Compile Include="IlEmit\IlEmitter.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
