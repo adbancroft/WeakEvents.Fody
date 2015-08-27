@@ -95,6 +95,35 @@ namespace ReferenceAssembly
                 while (handler != handler2);
             }
         }
+
+        private static void StaticEhT_Weak_Unsubscribe(EventHandler<AssemblyLoadEventArgs> weh)
+        {
+            _staticEht -= weh;
+        }
+
+        private static EventHandler<AssemblyLoadEventArgs> _staticEht;
+        public static event EventHandler<AssemblyLoadEventArgs> StaticEhT
+        {
+            add
+            {
+                Action<EventHandler<AssemblyLoadEventArgs>> unsubscribe = StaticEhT_Weak_Unsubscribe;
+                EventHandler<AssemblyLoadEventArgs> weakEh = value.MakeWeak(unsubscribe);
+                _staticEht += value.MakeWeak(weh => _staticEht -= weh);
+            }
+            remove
+            {
+                EventHandler<AssemblyLoadEventArgs> handler2;
+                EventHandler<AssemblyLoadEventArgs> handler =_staticEht;
+                EventHandler<AssemblyLoadEventArgs> weakEh = _staticEht.FindWeak(value);
+                do
+                {
+                    handler2 = handler;
+                    EventHandler<AssemblyLoadEventArgs> handler3 = (EventHandler<AssemblyLoadEventArgs>)Delegate.Remove(handler2, weakEh);
+                    handler = System.Threading.Interlocked.CompareExchange<EventHandler<AssemblyLoadEventArgs>>(ref _staticEht, handler3, handler2);
+                }
+                while (handler != handler2);
+            }
+        }
     }
 
 #pragma warning restore 0067
