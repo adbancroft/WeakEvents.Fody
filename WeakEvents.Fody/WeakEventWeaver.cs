@@ -6,6 +6,9 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using WeakEvents.Fody.IlEmit;
+using WeakEvents.Fody.IlEmit.StandardIl;
+using WeakEvents.Fody.IlEmit.WeakEventRuntime;
+using WeakEvents.Fody.IlEmit.Other;
 
 namespace WeakEvents.Fody
 {

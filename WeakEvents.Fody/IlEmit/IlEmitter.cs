@@ -30,8 +30,4 @@ namespace WeakEvents.Fody.IlEmit
 
         public MethodDefinition Method { get { return _preceedingCode.Method; } }
     }
-
-    static partial class EmitterExtensions
-    {
-    }
 }
