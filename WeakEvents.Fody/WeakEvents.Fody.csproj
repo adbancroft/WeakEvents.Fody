@@ -64,8 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CecilExtensions.cs" />
+    <Compile Include="IlEmit\Other\EmitTypeOf.cs" />
     <Compile Include="IlEmit\StandardIl\EmitCall.cs" />
     <Compile Include="IlEmit\EmitConcat.cs" />
+    <Compile Include="IlEmit\StandardIl\EmitCastClass.cs" />
     <Compile Include="IlEmit\WeakEventRuntime\EmitDelegateConvert.cs" />
     <Compile Include="IlEmit\Other\EmitDelegateRemove.cs" />
     <Compile Include="EventDefinitionExtensions.cs" />
