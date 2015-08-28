@@ -88,7 +88,7 @@ namespace WeakEvents.Fody
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
 
-            var findWeakParams = method.Concat(method.LoadField(eventDelegate), method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
+            var findWeakParams = method.LoadField(eventDelegate).Concat(method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
             var callFindWeak = method.Call(_openFindWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), findWeakParams);
             var weakHandler = method.DelegateConvert(callFindWeak, eventDelegate.FieldType);
 
@@ -130,7 +130,7 @@ namespace WeakEvents.Fody
 
             var unsubscribeAction = method.NewObject(_openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
             var genericHandler = method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT);
-            var makeWeakParams = method.Concat(genericHandler, unsubscribeAction);
+            var makeWeakParams = genericHandler.Concat(unsubscribeAction);
             var genericWeakHandler = method.Call(_openMakeWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), makeWeakParams);
             var weakHandler = method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType);
 
