@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -8,7 +7,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     class EmitFieldLoad : IlEmitterBase
     {
-        FieldReference _field;
+        private readonly FieldReference _field;
 
         public EmitFieldLoad(IlEmitter preceedingCode, FieldReference field)
             : base(preceedingCode)

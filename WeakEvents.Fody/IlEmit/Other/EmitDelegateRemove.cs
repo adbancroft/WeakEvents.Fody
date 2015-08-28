@@ -8,7 +8,7 @@ namespace WeakEvents.Fody.IlEmit.Other
 {
     class EmitDelegateRemove : IlEmitterBase
     {
-        private IlEmitter _inner;
+        private readonly IlEmitter _inner;
 
         public EmitDelegateRemove(IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
             : base(preceedingCode)

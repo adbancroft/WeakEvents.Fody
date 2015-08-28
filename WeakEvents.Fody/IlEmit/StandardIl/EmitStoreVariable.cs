@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -8,8 +7,8 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     class EmitStoreVariable : IlEmitterBase
     {
-        private VariableDefinition _variableDef;
-        private IlEmitter _variableValueGenerator;
+        private readonly VariableDefinition _variableDef;
+        private readonly IlEmitter _variableValueGenerator;
 
         public EmitStoreVariable(IlEmitter preceedingCode, VariableDefinition variableDef, IlEmitter variableValueGenerator)
             : base(preceedingCode)

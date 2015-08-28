@@ -9,7 +9,7 @@ namespace WeakEvents.Fody.IlEmit.Other
 {
     class EmitTypeOf : IlEmitterBase
     {
-        private IlEmitter _inner;
+        private readonly IlEmitter _inner;
 
         public EmitTypeOf(IlEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)

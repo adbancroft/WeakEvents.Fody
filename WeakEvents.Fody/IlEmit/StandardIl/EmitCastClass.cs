@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -8,7 +7,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     class EmitCastClass : IlEmitterBase
     {
-        private TypeReference _targetType;
+        private readonly TypeReference _targetType;
 
         public EmitCastClass(IlEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)

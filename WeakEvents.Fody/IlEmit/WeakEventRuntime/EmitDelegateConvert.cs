@@ -9,7 +9,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 {
     class EmitDelegateConvert : IlEmitterBase
     {
-        private IlEmitter _inner;
+        private readonly IlEmitter _inner;
 
         public EmitDelegateConvert(IlEmitter preceedingCode, IlEmitter itemToConvert, TypeReference targetType)
             : base(preceedingCode)
