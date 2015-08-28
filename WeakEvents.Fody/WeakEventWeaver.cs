@@ -19,8 +19,6 @@ namespace WeakEvents.Fody
 
         // CompilerGeneratedAttribute
         private CustomAttribute _compilerGeneratedAttribute;
-        // WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<T>()
-        private MethodReference _openMakeWeakT;
         // WeakEvents.Runtime.WeakEventHandlerExtensions.FindWeak<T>()
         private MethodReference _openFindWeakT;
         // Action<T>.ctor()
@@ -34,7 +32,6 @@ namespace WeakEvents.Fody
             _logger = logger;
 
             _compilerGeneratedAttribute = LoadCompilerGeneratedAttribute(moduleDef);
-            _openMakeWeakT = LoadOpenMakeWeakT(moduleDef);
             _openFindWeakT = LoadOpenFindWeakT(moduleDef);
             _openActionTCtor = LoadOpenActionTConstructor(moduleDef);
             _openEventHandlerT = LoadOpenEventHandlerT(moduleDef);
@@ -130,8 +127,7 @@ namespace WeakEvents.Fody
 
             var unsubscribeAction = method.NewObject(_openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
             var genericHandler = method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT);
-            var makeWeakParams = genericHandler.Concat(unsubscribeAction);
-            var genericWeakHandler = method.Call(_openMakeWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), makeWeakParams);
+            var genericWeakHandler = method.MakeWeak(closedEventHandlerT, genericHandler, unsubscribeAction);
             var weakHandler = method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType);
 
             return method.Store(weakEventHandler, weakHandler);
@@ -200,20 +196,6 @@ namespace WeakEvents.Fody
             var compilerGeneratedDefinition = moduleDef.Import(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute));
             var compilerGeneratedCtor = moduleDef.Import(compilerGeneratedDefinition.Resolve().Methods.Single(m => m.IsConstructor && m.Parameters.Count == 0));
             return new CustomAttribute(compilerGeneratedCtor);
-        }
-
-        private static MethodReference LoadOpenMakeWeakT(ModuleDefinition moduleDef)
-        {
-            var wehExtensionsReference = moduleDef.Import(typeof(WeakEvents.Runtime.WeakEventHandlerExtensions));
-            var wehExtensionsDefinition = wehExtensionsReference.Resolve();
-            var makeWeakMethodDefinition = wehExtensionsDefinition.Methods.Single(
-                x => x.Name == "MakeWeak"
-                    && x.CallingConvention == MethodCallingConvention.Generic
-                    && x.HasGenericParameters
-                    && x.GenericParameters[0].HasConstraints
-                    && x.GenericParameters[0].Constraints[0].FullName.Equals(SysEventArgsName)
-            );
-            return moduleDef.Import(makeWeakMethodDefinition);
         }
 
         private static MethodReference LoadOpenFindWeakT(ModuleDefinition moduleDef)

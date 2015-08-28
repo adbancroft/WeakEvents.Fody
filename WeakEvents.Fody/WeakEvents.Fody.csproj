@@ -81,6 +81,7 @@
     <Compile Include="IlEmit\StandardIl\EmitStoreVariable.cs" />
     <Compile Include="IlEmit\EmptyEmitter.cs" />
     <Compile Include="IlEmit\IlEmitter.cs" />
+    <Compile Include="IlEmit\WeakEventRuntime\EmitMakeWeak.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
