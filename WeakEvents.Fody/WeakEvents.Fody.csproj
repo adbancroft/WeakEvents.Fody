@@ -68,6 +68,7 @@
     <Compile Include="IlEmit\StandardIl\EmitCall.cs" />
     <Compile Include="IlEmit\EmitConcat.cs" />
     <Compile Include="IlEmit\StandardIl\EmitCastClass.cs" />
+    <Compile Include="IlEmit\StandardIl\EmitLdToken.cs" />
     <Compile Include="IlEmit\WeakEventRuntime\EmitDelegateConvert.cs" />
     <Compile Include="IlEmit\Other\EmitDelegateRemove.cs" />
     <Compile Include="EventDefinitionExtensions.cs" />
