@@ -67,11 +67,7 @@ namespace WeakEvents.Fody
             int oldCodeIndex = eventt.RemoveMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
-            var instructionToReplace = Code.Ldarg_1;
-            if (eventt.AddMethod.IsStatic)
-            {
-                instructionToReplace = Code.Ldarg_0;
-            }
+            var instructionToReplace = GetMethodLoad1stArgumentCode(eventt.AddMethod);
             var instructions = eventt.RemoveMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
@@ -86,11 +82,20 @@ namespace WeakEvents.Fody
         private IlEmitter WeaveFindWeakCall(MethodDefinition method, FieldReference eventDelegate, VariableDefinition weakEventHandler)
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
+            bool needsCast = !closedEventHandlerT.FullName.Equals(eventDelegate.FieldType.FullName);
 
-            var callFindWeak = method.FindWeak(closedEventHandlerT, method.LoadField(eventDelegate), method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
-            var weakHandler = method.DelegateConvert(callFindWeak, eventDelegate.FieldType);
+            var handler = method.LoadMethod1stArg();
+            if (needsCast)
+            {
+                handler = method.DelegateConvert(handler, closedEventHandlerT);
+            }
+            var callFindWeak = method.FindWeak(closedEventHandlerT, method.LoadField(eventDelegate), handler);
 
-            return method.Store(weakEventHandler, weakHandler);
+            if (needsCast)
+            {
+                return method.Store(weakEventHandler, method.DelegateConvert(callFindWeak, eventDelegate.FieldType));
+            }
+            return method.Store(weakEventHandler, callFindWeak); 
         }
 
         private void ProcessAddMethod(EventDefinition eventt, FieldReference eventDelegate)
@@ -100,11 +105,7 @@ namespace WeakEvents.Fody
             int oldCodeIndex = eventt.AddMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
-            var instructionToReplace = Code.Ldarg_1;
-            if (eventt.AddMethod.IsStatic)
-            {
-                instructionToReplace = Code.Ldarg_0;
-            }
+            var instructionToReplace = GetMethodLoad1stArgumentCode(eventt.AddMethod);
             var instructions = eventt.AddMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
@@ -120,13 +121,21 @@ namespace WeakEvents.Fody
         private IlEmitter WeaveMakeWeakCall(MethodDefinition method, FieldReference eventDelegate, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
+            bool needsCast = !closedEventHandlerT.FullName.Equals(eventDelegate.FieldType.FullName);
 
             var unsubscribeAction = method.NewObject(_openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
-            var genericHandler = method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT);
+            IlEmitter genericHandler = method.LoadMethod1stArg();
+            if (needsCast)
+            {
+                genericHandler = method.DelegateConvert(genericHandler, closedEventHandlerT);
+            }
             var genericWeakHandler = method.MakeWeak(closedEventHandlerT, genericHandler, unsubscribeAction);
-            var weakHandler = method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType);
 
-            return method.Store(weakEventHandler, weakHandler);
+            if (needsCast)
+            {
+                return method.Store(weakEventHandler, method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType));
+            }
+            return method.Store(weakEventHandler, genericWeakHandler);
         }
 
         // Addes a new method to the class that can unsubscribe an event handler from the event delegate
@@ -140,6 +149,7 @@ namespace WeakEvents.Fody
         private MethodDefinition AddUnsubscribeMethodForEvent(EventDefinition eventt, FieldReference eventDelegate)
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
+            bool needsCast = !closedEventHandlerT.FullName.Equals(eventDelegate.FieldType.FullName);
 
             // private void <event name>_Weak_Unsubscribe(EventHandler< eventargsType > weh)
             string unsubscribeMethodName = string.Format("<{0}>_Weak_Unsubscribe", eventt.AddMethod.Name);
@@ -151,9 +161,17 @@ namespace WeakEvents.Fody
 
             eventt.DeclaringType.Methods.Add(unsubscribe);
 
-            var weakHandler = unsubscribe.DelegateConvert(unsubscribe.LoadMethod1stArg(), eventDelegate.FieldType);
+            var weakHandler = unsubscribe.LoadMethod1stArg();
+            if (needsCast)
+            {
+                weakHandler = unsubscribe.DelegateConvert(weakHandler, eventDelegate.FieldType);
+            }
             var removeFromFieldDelegate = unsubscribe.CallDelegateRemove(unsubscribe.LoadField(eventDelegate), weakHandler);
-            var compatibleHandler = unsubscribe.DelegateConvert(removeFromFieldDelegate, eventDelegate.FieldType);
+            var compatibleHandler = removeFromFieldDelegate;
+            if (needsCast)
+            {
+                compatibleHandler = unsubscribe.DelegateConvert(removeFromFieldDelegate, eventDelegate.FieldType);
+            }
             var instructions = unsubscribe.StoreField(compatibleHandler, eventDelegate).Return();
             unsubscribe.InsertInstructions(instructions, 0);
 
@@ -172,6 +190,17 @@ namespace WeakEvents.Fody
         {
             TypeReference eventArgsType = _moduleDef.Import(eventDelegate.FieldType.GetEventArgsType());
             return _openEventHandlerT.MakeGenericInstanceType(eventArgsType);
+        }
+
+        // The opcode to load a methods 1st real argument varies depending on the static modifier.
+        private static Code GetMethodLoad1stArgumentCode(MethodDefinition method)
+        {
+            if (method.IsStatic)
+            {
+                return Code.Ldarg_0;
+            }
+
+            return Code.Ldarg_1;
         }
 
         #region Static type & method loaders
