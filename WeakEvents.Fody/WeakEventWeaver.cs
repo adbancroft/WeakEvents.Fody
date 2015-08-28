@@ -62,9 +62,9 @@ namespace WeakEvents.Fody
 
         private void ProcessRemoveMethod(EventDefinition eventt, FieldReference eventDelegate)
         {
-            var weakEventHandler = CreateVariable(eventt.RemoveMethod, eventDelegate.FieldType);
+            var weakEventHandler = eventt.RemoveMethod.CreateVariable(eventDelegate.FieldType);
             var makeWeak = WeaveFindWeakCall(eventt.RemoveMethod, eventDelegate, weakEventHandler);
-            int oldCodeIndex = InsertInstructions(eventt.RemoveMethod, makeWeak, 0);
+            int oldCodeIndex = eventt.RemoveMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
             var instructions = eventt.RemoveMethod.Body.Instructions;
@@ -88,21 +88,11 @@ namespace WeakEvents.Fody
             return method.Store(weakEventHandler, weakHandler);
         }
 
-        private static int InsertInstructions(MethodDefinition method, IlEmitter weakHandler, int insertPoint)
-        {
-            foreach (var i in weakHandler.Emit())
-            {
-                method.Body.Instructions.Insert(insertPoint, i);
-                ++insertPoint;
-            }
-            return insertPoint;
-        }
-
         private void ProcessAddMethod(EventDefinition eventt, FieldReference eventDelegate)
         {
-            var weakEventHandler = CreateVariable(eventt.AddMethod, eventDelegate.FieldType);
+            var weakEventHandler = eventt.AddMethod.CreateVariable(eventDelegate.FieldType);
             var makeWeak = WeaveMakeWeakCall(eventt.AddMethod, eventDelegate, AddUnsubscribeMethodForEvent(eventt, eventDelegate), weakEventHandler);
-            int oldCodeIndex = InsertInstructions(eventt.AddMethod, makeWeak, 0);
+            int oldCodeIndex = eventt.AddMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
             var instructions = eventt.AddMethod.Body.Instructions;
@@ -155,11 +145,7 @@ namespace WeakEvents.Fody
             var removeFromFieldDelegate = unsubscribe.CallDelegateRemove(unsubscribe.LoadField(eventDelegate), weakHandler);
             var compatibleHandler = unsubscribe.DelegateConvert(removeFromFieldDelegate, eventDelegate.FieldType);
             var instructions = unsubscribe.StoreField(compatibleHandler, eventDelegate).Return();
-
-            foreach (var i in instructions.Emit())
-            {
-                unsubscribe.Body.Instructions.Add(i);
-            }
+            unsubscribe.InsertInstructions(instructions, 0);
 
             return unsubscribe;
         }
@@ -170,13 +156,6 @@ namespace WeakEvents.Fody
             if (eventt.AddMethod.IsStatic)
                 attributes = attributes | MethodAttributes.Static;
             return attributes;
-        }
-
-        private static VariableDefinition CreateVariable(MethodDefinition method, TypeReference variableType)
-        {
-            var variable = new VariableDefinition(variableType);
-            method.Body.Variables.Add(variable);
-            return variable;
         }
 
         private GenericInstanceType GetEquivalentGenericEventHandler(FieldReference eventDelegate)

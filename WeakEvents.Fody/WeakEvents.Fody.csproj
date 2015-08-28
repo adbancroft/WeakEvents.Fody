@@ -84,6 +84,7 @@
     <Compile Include="IlEmit\WeakEventRuntime\EmitFindWeak.cs" />
     <Compile Include="IlEmit\WeakEventRuntime\EmitMakeWeak.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="MethodDefinitionExtensions.cs" />
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
