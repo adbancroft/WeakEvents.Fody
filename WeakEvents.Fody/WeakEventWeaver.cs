@@ -89,7 +89,7 @@ namespace WeakEvents.Fody
             var callFindWeak = method.Call(_openFindWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), findWeakParams);
             var weakHandler = method.DelegateConvert(callFindWeak, eventDelegate.FieldType);
 
-            return weakHandler.Store(weakEventHandler);
+            return method.Store(weakEventHandler, weakHandler);
         }
 
         private static int InsertInstructions(MethodDefinition method, IlEmitter weakHandler, int insertPoint)
@@ -131,7 +131,7 @@ namespace WeakEvents.Fody
             var genericWeakHandler = method.Call(_openMakeWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), makeWeakParams);
             var weakHandler = method.DelegateConvert(genericWeakHandler, eventDelegate.FieldType);
 
-            return weakHandler.Store(weakEventHandler);
+            return method.Store(weakEventHandler, weakHandler);
         }
 
         // Addes a new method to the class that can unsubscribe an event handler from the event delegate

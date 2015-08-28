@@ -9,28 +9,31 @@ namespace WeakEvents.Fody.IlEmit
     class EmitStoreVariable : IlEmitterBase
     {
         private VariableDefinition _variableDef;
+        private IlEmitter _variableValueGenerator;
 
-        public EmitStoreVariable(IlEmitter preceedingCode, VariableDefinition variableDef)
+        public EmitStoreVariable(IlEmitter preceedingCode, VariableDefinition variableDef, IlEmitter variableValueGenerator)
             : base(preceedingCode)
         {
             _variableDef = variableDef;
+            _variableValueGenerator = variableValueGenerator;
         }
 
         public override IEnumerable<Instruction> Emit()
         {
-            return EmitPreceeding().Concat(new[] { Instruction.Create(OpCodes.Stloc, _variableDef) });
+            return EmitPreceeding().Concat(_variableValueGenerator.Emit())
+                                   .Concat(new[] { Instruction.Create(OpCodes.Stloc, _variableDef) });
         }
     }
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter Store(this IlEmitter preceedingCode, VariableDefinition variableDef)
+        public static IlEmitter Store(this IlEmitter preceedingCode, VariableDefinition variableDef, IlEmitter variableValueGenerator)
         {
-            return new EmitStoreVariable(preceedingCode, variableDef);
+            return new EmitStoreVariable(preceedingCode, variableDef, variableValueGenerator);
         }
-        public static IlEmitter Store(this MethodDefinition method, VariableDefinition variableDef)
+        public static IlEmitter Store(this MethodDefinition method, VariableDefinition variableDef, IlEmitter variableValueGenerator)
         {
-            return Store(new EmptyEmitter(method), variableDef);
+            return Store(new EmptyEmitter(method), variableDef, variableValueGenerator);
         }
     }
 }
