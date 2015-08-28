@@ -174,5 +174,34 @@ namespace WeakEvents.Fody.Test
             source.FireCannotBeMadeWeak();
             Assert.AreEqual(2, target.FireCount);
         }
+
+        [TestMethod]
+        public void StaticEvent_Subscribe_IsWeak()
+        {
+            // Setup event source, target & wire together
+            var target = new EventTarget();
+            var wr = new WeakReference(target);
+            Type source = _weaverHelper.Assembly.GetType("AssemblyToProcessDotNet4.AutoWeakEventSource");
+            MethodInfo eventAdd = source.GetMethod("add_StaticGenericEvent");
+            MethodInfo eventFire = source.GetMethod("FireStaticGenericEvent");
+            //var handler = WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<AssemblyLoadEventArgs>(target.EventHandler, eh => { });
+            EventHandler<AssemblyLoadEventArgs> handler = target.EventHandler;
+            eventAdd.Invoke(null, new object[] { handler });
+
+            // Confirm event fires correctly.
+            Assert.IsNotNull(wr.Target);
+            eventFire.Invoke(null, null);
+            Assert.AreEqual(1, target.FireCount);
+
+            // Confirm that the event source does not keep the target alive.
+            target = null;
+            handler = null;
+            System.GC.Collect();
+            Assert.IsNull(wr.Target);
+
+            // Fire the event again to force clean up of the weak event handler instance
+            // There is no way to check that clean up, however this will confirm the woven IL is correct
+            eventFire.Invoke(null, null);
+        }
     }
 }

@@ -17,6 +17,13 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
         public override IEnumerable<Instruction> Emit()
         {
+            if (Method.IsStatic)
+            {
+                return EmitPreceeding().Concat(new[] { 
+                    Instruction.Create(OpCodes.Ldsfld, _field)
+                });
+            }
+
             return EmitPreceeding().Concat(new[] { 
                 Instruction.Create(OpCodes.Ldarg_0),
                 Instruction.Create(OpCodes.Ldfld, _field)

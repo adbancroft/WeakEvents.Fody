@@ -66,11 +66,16 @@ namespace WeakEvents.Fody
             var makeWeak = WeaveFindWeakCall(eventt.RemoveMethod, eventDelegate, weakEventHandler);
             int oldCodeIndex = eventt.RemoveMethod.InsertInstructions(makeWeak, 0);
 
-            // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
+            // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
+            var instructionToReplace = Code.Ldarg_1;
+            if (eventt.AddMethod.IsStatic)
+            {
+                instructionToReplace = Code.Ldarg_0;
+            }
             var instructions = eventt.RemoveMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
-                if (instructions[i].OpCode.Code.Equals(Code.Ldarg_1))
+                if (instructions[i].OpCode.Code.Equals(instructionToReplace))
                 {
                     instructions[i] = Instruction.Create(OpCodes.Ldloc, weakEventHandler);
                 }
@@ -94,11 +99,16 @@ namespace WeakEvents.Fody
             var makeWeak = WeaveMakeWeakCall(eventt.AddMethod, eventDelegate, AddUnsubscribeMethodForEvent(eventt, eventDelegate), weakEventHandler);
             int oldCodeIndex = eventt.AddMethod.InsertInstructions(makeWeak, 0);
 
-            // Now replace any further use of the method parameter (Ldarg_1) with the weak event handler
+            // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
+            var instructionToReplace = Code.Ldarg_1;
+            if (eventt.AddMethod.IsStatic)
+            {
+                instructionToReplace = Code.Ldarg_0;
+            }
             var instructions = eventt.AddMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
-                if (instructions[i].OpCode.Code.Equals(Code.Ldarg_1))
+                if (instructions[i].OpCode.Code.Equals(instructionToReplace))
                 {
                     instructions[i] = Instruction.Create(OpCodes.Ldloc, weakEventHandler);
                 }
