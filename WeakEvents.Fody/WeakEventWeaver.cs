@@ -19,8 +19,6 @@ namespace WeakEvents.Fody
 
         // CompilerGeneratedAttribute
         private CustomAttribute _compilerGeneratedAttribute;
-        // WeakEvents.Runtime.WeakEventHandlerExtensions.FindWeak<T>()
-        private MethodReference _openFindWeakT;
         // Action<T>.ctor()
         private MethodReference _openActionTCtor;
         // EventHandler<T>
@@ -32,7 +30,6 @@ namespace WeakEvents.Fody
             _logger = logger;
 
             _compilerGeneratedAttribute = LoadCompilerGeneratedAttribute(moduleDef);
-            _openFindWeakT = LoadOpenFindWeakT(moduleDef);
             _openActionTCtor = LoadOpenActionTConstructor(moduleDef);
             _openEventHandlerT = LoadOpenEventHandlerT(moduleDef);
         }
@@ -85,8 +82,7 @@ namespace WeakEvents.Fody
         {
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
 
-            var findWeakParams = method.LoadField(eventDelegate).Concat(method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
-            var callFindWeak = method.Call(_openFindWeakT.MakeMethodClosedGeneric(closedEventHandlerT.GenericArguments[0]), findWeakParams);
+            var callFindWeak = method.FindWeak(closedEventHandlerT, method.LoadField(eventDelegate), method.DelegateConvert(method.LoadMethod1stArg(), closedEventHandlerT));
             var weakHandler = method.DelegateConvert(callFindWeak, eventDelegate.FieldType);
 
             return method.Store(weakEventHandler, weakHandler);
@@ -198,24 +194,6 @@ namespace WeakEvents.Fody
             return new CustomAttribute(compilerGeneratedCtor);
         }
 
-        private static MethodReference LoadOpenFindWeakT(ModuleDefinition moduleDef)
-        {
-            var wehExtensionsReference = moduleDef.Import(typeof(WeakEvents.Runtime.WeakEventHandlerExtensions));
-            var wehExtensionsDefinition = wehExtensionsReference.Resolve();
-            var makeWeakMethodDefinition = wehExtensionsDefinition.Methods.Single(
-                x => x.Name == "FindWeak"
-                    && x.HasParameters
-                    && x.Parameters.Count == 2
-                    && x.Parameters[0].ParameterType.FullName.Equals(DelegateName)
-                    && x.CallingConvention == MethodCallingConvention.Generic
-                    && x.HasGenericParameters
-                    && x.GenericParameters[0].HasConstraints
-                    && x.GenericParameters[0].Constraints[0].FullName.Equals(SysEventArgsName)
-            );
-            return moduleDef.Import(makeWeakMethodDefinition);
-        }
-
-
         private static MethodReference LoadOpenActionTConstructor(ModuleDefinition moduleDef)
         {
             var actionDefinition = moduleDef.Import(typeof(System.Action<>)).Resolve();
@@ -235,8 +213,6 @@ namespace WeakEvents.Fody
 
         private static string SysObjectName = typeof(System.Object).FullName;
         private static string IntPtrName = typeof(System.IntPtr).FullName;
-        private static string SysEventArgsName = typeof(System.EventArgs).FullName;
-        private static string DelegateName = typeof(System.Delegate).FullName;
 
         #endregion
     }
