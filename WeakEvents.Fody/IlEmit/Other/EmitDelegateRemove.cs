@@ -1,32 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using WeakEvents.Fody.IlEmit.StandardIl;
 
 namespace WeakEvents.Fody.IlEmit.Other
 {
     class EmitDelegateRemove : IlEmitterBase
     {
-        // Delegate.Remove()
-        private MethodReference _delegateRemoveMethodRef;
-        private IlEmitter _itemToRemoveFrom;
-        private IlEmitter _itemToRemove;
+        private IlEmitter _inner;
 
         public EmitDelegateRemove(IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
             : base(preceedingCode)
         {
-            _itemToRemoveFrom = itemToRemoveFrom;
-            _itemToRemove = itemToRemove;
-            _delegateRemoveMethodRef = LoadDelegateRemoveMethodDefinition();
+            _inner = Method.Call(LoadDelegateRemoveMethodDefinition(), itemToRemoveFrom.Concat(itemToRemove));
         }
 
         public override IEnumerable<Instruction> Emit()
         {
-            return EmitPreceeding()
-                    .Concat(_itemToRemoveFrom.Emit())
-                    .Concat(_itemToRemove.Emit())
-                    .Concat(new [] { Instruction.Create(OpCodes.Call, _delegateRemoveMethodRef) } );
+            return EmitPreceeding().Concat(_inner.Emit());
         }
 
         private MethodReference LoadDelegateRemoveMethodDefinition()
