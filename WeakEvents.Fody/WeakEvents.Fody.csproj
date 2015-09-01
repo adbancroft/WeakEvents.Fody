@@ -90,6 +90,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
     <Compile Include="EventWeaver.cs" />
+    <Compile Include="WeakEventWeaver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WeakEvents.Runtime\WeakEvents.Runtime.csproj">
