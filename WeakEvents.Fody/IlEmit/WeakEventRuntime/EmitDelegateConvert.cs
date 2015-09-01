@@ -15,7 +15,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             _inner =  Method
-                        .Call(LoadDelegateConvertChangeType(), itemToConvert.Concat(Method.TypeOf(targetType)))
+                        .Call(LoadDelegateConvertChangeType(), itemToConvert, Method.TypeOf(targetType))
                         .CastClass(targetType);
         }
 

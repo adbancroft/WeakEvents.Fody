@@ -17,8 +17,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             var openMakeWeak = LoadOpenMakeWeakT();
-            var makeWeakParams = eventHandler.Concat(unsubscribe);
-            _inner = Method.Call(openMakeWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), makeWeakParams);
+            _inner = Method.Call(openMakeWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandler, unsubscribe);
         }
 
         public override IEnumerable<Instruction> Emit()

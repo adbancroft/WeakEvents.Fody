@@ -13,7 +13,7 @@ namespace WeakEvents.Fody.IlEmit.Other
         public EmitDelegateRemove(IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
             : base(preceedingCode)
         {
-            _inner = Method.Call(LoadDelegateRemoveMethodDefinition(), itemToRemoveFrom.Concat(itemToRemove));
+            _inner = Method.Call(LoadDelegateRemoveMethodDefinition(), itemToRemoveFrom, itemToRemove);
         }
 
         public override IEnumerable<Instruction> Emit()

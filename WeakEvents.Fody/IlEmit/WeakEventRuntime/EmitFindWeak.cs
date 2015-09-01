@@ -15,8 +15,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             var openFindWeak = LoadOpenFindWeakT();
-            var findWeakParams = eventHandlerDelegate.Concat(strongEventHandler);
-            _inner = Method.Call(openFindWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), findWeakParams);
+            _inner = Method.Call(openFindWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandlerDelegate, strongEventHandler);
         }
 
         public override IEnumerable<Instruction> Emit()

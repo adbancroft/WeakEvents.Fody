@@ -10,10 +10,10 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         private IlEmitter _methodParameters;
         private MethodReference _targetMethod;
 
-        public EmitCall(IlEmitter preceedingCode, MethodReference targetMethod, IlEmitter methodParameters)
+        public EmitCall(IlEmitter preceedingCode, MethodReference targetMethod, params IlEmitter[] methodParameters)
             : base(preceedingCode)
         {
-            _methodParameters = methodParameters;
+            _methodParameters = methodParameters.Aggregate((prev, next) => prev.Concat(next));
             _targetMethod = targetMethod;
         }
 
@@ -26,11 +26,11 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter Call(this IlEmitter preceedingCode, MethodReference targetMethod, IlEmitter methodParameters)
+        public static IlEmitter Call(this IlEmitter preceedingCode, MethodReference targetMethod, params IlEmitter[] methodParameters)
         {
             return new EmitCall(preceedingCode, targetMethod, methodParameters);
         }
-        public static IlEmitter Call(this MethodDefinition method, MethodReference targetMethod, IlEmitter methodParameters)
+        public static IlEmitter Call(this MethodDefinition method, MethodReference targetMethod, params IlEmitter[] methodParameters)
         {
             return Call(new EmptyEmitter(method), targetMethod, methodParameters);
         }
