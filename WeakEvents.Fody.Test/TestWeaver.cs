@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestInterfaces;
@@ -220,6 +221,22 @@ namespace WeakEvents.Fody.Test
                 CreateWovenEventSource(),
                 (target, source) => source.CannotBeMadeWeak += target.EventHandler,
                 source => source.FireCannotBeMadeWeak());
+        }
+
+        [TestMethod]
+        public void Test_WovenClass_WeakEventAttributeRemoved()
+        {
+            IEventSource wovenClass = CreateWovenEventSource();
+
+            Assert.AreEqual(0, wovenClass.GetType().GetCustomAttributes(typeof(WeakEvents.ImplementWeakEventsAttribute), false).Length);
+        }
+
+        [TestMethod]
+        public void Test_WovenAssembly_WeakEventReferenceRemoved()
+        {
+            IEventSource wovenClass = CreateWovenEventSource();
+
+            Assert.IsFalse(wovenClass.GetType().Assembly.GetReferencedAssemblies().Any(name => name.FullName.Equals(typeof(WeakEvents.ImplementWeakEventsAttribute).Assembly.FullName)));
         }
     }
 }

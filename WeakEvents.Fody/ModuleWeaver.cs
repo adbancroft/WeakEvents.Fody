@@ -4,6 +4,7 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using Mono.Collections.Generic;
 
 namespace WeakEvents.Fody
 {
@@ -50,9 +51,21 @@ namespace WeakEvents.Fody
                 {
                     LogInfo("Skipping type " + typeDef);
                 }
+                RemoveAttributes(typeDef.CustomAttributes);
             }
 
+            CleanReferences();
+
             LogDebug("Finished weak event weaving");
+        }
+
+        private void CleanReferences()
+        {
+            var referenceToRemove = ModuleDefinition.AssemblyReferences.FirstOrDefault(x => x.Name.Equals(typeof(ImplementWeakEventsAttribute).Assembly.GetName().Name));
+            if (referenceToRemove != null)
+            {
+                ModuleDefinition.AssemblyReferences.Remove(referenceToRemove);
+            }
         }
 
         private void ProcessType(TypeDefinition typeToWeave, WeakEventWeaver weakEventWeaver)
@@ -65,6 +78,19 @@ namespace WeakEvents.Fody
             }
 
             LogDebug("Finished weak event weaving for " + typeToWeave.FullName);
+        }
+
+        private void RemoveAttributes(Collection<CustomAttribute> customAttributes)
+        {
+            foreach (var customAttribute in customAttributes.Where(IsWeakEventAttribute).ToList())
+            {
+                customAttributes.Remove(customAttribute);
+            }
+        }
+
+        private bool IsWeakEventAttribute(CustomAttribute attribute)
+        {
+            return attribute.Constructor.DeclaringType.FullName.Equals(typeof(ImplementWeakEventsAttribute).FullName);
         }
     }
 }
