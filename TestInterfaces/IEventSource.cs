@@ -26,6 +26,11 @@ namespace TestInterfaces
         // The weaver should ignore this as the delegate doesn't conform to the standard (object, EventArgs) pattern
         event CannotBeMadeWeak CannotBeMadeWeak;
         void FireCannotBeMadeWeak();
+
+        void SubscribeStaticEvent(EventHandler<AssemblyLoadEventArgs> handler);
+        void UnsubscribeStaticEvent(EventHandler<AssemblyLoadEventArgs> handler);
+        void FireStaticGenericEvent();
+        bool IsStaticGenericEventSubscribed { get; }
     }
 
 #pragma warning restore 0067

@@ -43,7 +43,15 @@ namespace AssemblyToProcessDotNet4
         }
 
         public static event EventHandler<AssemblyLoadEventArgs> StaticGenericEvent;
-        public static void FireStaticGenericEvent()
+        public void SubscribeStaticEvent(EventHandler<AssemblyLoadEventArgs> handler)
+        {
+            StaticGenericEvent += handler;
+        }
+        public void UnsubscribeStaticEvent(EventHandler<AssemblyLoadEventArgs> handler)
+        {
+            StaticGenericEvent -= handler;
+        }
+        public void FireStaticGenericEvent()
         {
             if (StaticGenericEvent != null)
                 StaticGenericEvent(null, new AssemblyLoadEventArgs(null));
