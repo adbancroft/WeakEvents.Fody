@@ -36,7 +36,7 @@ namespace WeakEvents.Fody.Test
 
             moduleDefinition.Write(AfterAssemblyPath);
 
-            ProvideIlStepThrough(AfterAssemblyPath);
+            //ProvideIlStepThrough(AfterAssemblyPath);
 
             Assembly = Assembly.LoadFile(AfterAssemblyPath);
         }
