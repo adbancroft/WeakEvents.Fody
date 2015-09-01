@@ -7,6 +7,7 @@ using WeakEvents.Fody.IlEmit.StandardIl;
 
 namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 {
+    // WeakEvents.Runtime.DelegateConvert(itemToConvert, targetType)
     class EmitDelegateConvert : IlEmitterBase
     {
         private readonly IlEmitter _inner;

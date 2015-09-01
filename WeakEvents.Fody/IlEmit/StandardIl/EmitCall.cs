@@ -5,10 +5,11 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
+    // OpCodes.Call
     class EmitCall : IlEmitterBase
     {
-        private IlEmitter _methodParameters;
-        private MethodReference _targetMethod;
+        private readonly IlEmitter _methodParameters;
+        private readonly MethodReference _targetMethod;
 
         public EmitCall(IlEmitter preceedingCode, MethodReference targetMethod, params IlEmitter[] methodParameters)
             : base(preceedingCode)

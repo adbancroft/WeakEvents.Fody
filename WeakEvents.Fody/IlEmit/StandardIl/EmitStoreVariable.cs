@@ -5,6 +5,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
+    // OpCodes.Stloc
     class EmitStoreVariable : IlEmitterBase
     {
         private readonly VariableDefinition _variableDef;

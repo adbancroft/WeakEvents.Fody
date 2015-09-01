@@ -6,6 +6,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit
 {
+    // Empty emitter. Will usually be the root of an emitter chain.
     class EmptyEmitter : IlEmitter
     {
         private MethodDefinition _method;

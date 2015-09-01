@@ -5,6 +5,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
+    // OpCodes.Ret
     class EmitReturn : IlEmitterBase
     {
         public EmitReturn(IlEmitter preceedingCode)

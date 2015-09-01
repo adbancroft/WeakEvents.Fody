@@ -5,6 +5,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
+    // OpCodes.Ldfld (or Ldsfld is method is static)
     class EmitFieldLoad : IlEmitterBase
     {
         private readonly FieldReference _field;

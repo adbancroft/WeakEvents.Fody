@@ -6,6 +6,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit
 {
+    // Concatenate emitters
     class EmitConcat : IlEmitterBase
     {
         private IlEmitter _second;

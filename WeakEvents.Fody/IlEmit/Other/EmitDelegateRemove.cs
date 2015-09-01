@@ -6,6 +6,7 @@ using WeakEvents.Fody.IlEmit.StandardIl;
 
 namespace WeakEvents.Fody.IlEmit.Other
 {
+    // Emit IL for a call to Delegate.Remove(itemToRemoveFrom, itemToRemove)
     class EmitDelegateRemove : IlEmitterBase
     {
         private readonly IlEmitter _inner;

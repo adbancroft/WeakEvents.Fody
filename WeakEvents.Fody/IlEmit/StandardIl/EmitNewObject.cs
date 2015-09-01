@@ -5,15 +5,16 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
+    // OpCodes.Newobj
     class EmitNewObject : IlEmitterBase
     {
         private readonly IlEmitter _ctorParameters;
         private readonly MethodReference _ctor;
 
-        public EmitNewObject(IlEmitter preceedingCode, MethodReference ctor, IlEmitter ctorParameters)
+        public EmitNewObject(IlEmitter preceedingCode, MethodReference ctor, params IlEmitter[] ctorParameters)
             : base(preceedingCode)
         {
-            _ctorParameters = ctorParameters;
+            _ctorParameters = ctorParameters.Aggregate((prev, next) => prev.Concat(next));
             _ctor = ctor;
         }
 
@@ -26,11 +27,11 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter NewObject(this IlEmitter preceedingCode, MethodReference ctor, IlEmitter ctorParameters)
+        public static IlEmitter NewObject(this IlEmitter preceedingCode, MethodReference ctor, params IlEmitter[] ctorParameters)
         {
             return new EmitNewObject(preceedingCode, ctor, ctorParameters);
         }
-        public static IlEmitter NewObject(this MethodDefinition method, MethodReference ctor, IlEmitter ctorParameters)
+        public static IlEmitter NewObject(this MethodDefinition method, MethodReference ctor, params IlEmitter[] ctorParameters)
         {
             return NewObject(new EmptyEmitter(method), ctor, ctorParameters);
         }
