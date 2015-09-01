@@ -31,12 +31,17 @@ namespace WeakEvents.Fody.Test
             _weaverHelper = new WeaverHelper("AssemblyToProcessDotNet4.dll");
         }
 
-        private void TestSubscribe(Action<EventTarget, IEventSource> subscribe, Action<IEventSource> fireEvent)
+        private IEventSource CreateWovenEventSource()
+        {
+            return (IEventSource)_weaverHelper.GetInstance("AssemblyToProcessDotNet4.AutoWeakEventSource");
+        }
+
+        private void TestWeakSubscribe(Action<EventTarget, IEventSource> subscribe, Action<IEventSource> fireEvent)
         {
             // Setup event source, target & wire together
             var target = new EventTarget();
             var wr = new WeakReference(target);
-            var source = (IEventSource)_weaverHelper.GetInstance("AssemblyToProcessDotNet4.AutoWeakEventSource");
+            var source = CreateWovenEventSource();
             subscribe(target, source);
 
             // Confirm event fires correctly.
@@ -57,13 +62,13 @@ namespace WeakEvents.Fody.Test
             System.GC.KeepAlive(source);
         }
 
-        private void TestUnsubscribe(Action<EventTarget, IEventSource> subscribe, Action<IEventSource> fireEvent, Action<EventTarget, IEventSource> unsubscribe, Func<IEventSource, bool> isEventSubscribed)
+        private void TestWeakUnsubscribe(Action<EventTarget, IEventSource> subscribe, Action<IEventSource> fireEvent, Action<EventTarget, IEventSource> unsubscribe, Func<IEventSource, bool> isEventSubscribed)
         {
             // Setup event source, target & wire together
             var target = new EventTarget();
             var wr = new WeakReference(target);
 
-            var source = (TestInterfaces.IEventSource)_weaverHelper.GetInstance("AssemblyToProcessDotNet4.AutoWeakEventSource");
+            var source = CreateWovenEventSource();
             subscribe(target, source);
 
             // Confirm event fires correctly.
@@ -83,10 +88,36 @@ namespace WeakEvents.Fody.Test
             System.GC.KeepAlive(source);
         }
 
+        private void TestStrongSubscribe(Action<EventTarget, IEventSource> subscribe, Action<IEventSource> fireEvent)
+        {
+            // Confirm that an event that cannot be makde weak retains
+            // a strong reference to the target and still works.
+
+            // Setup event source, target & wire together
+            var target = new EventTarget();
+            var wr = new WeakReference(target);
+            var source = CreateWovenEventSource();
+            subscribe(target, source);
+
+            // Confirm event fires correctly.
+            Assert.IsNotNull(wr.Target);
+            fireEvent(source);
+            Assert.AreEqual(1, target.FireCount);
+
+            // Confirm that the event source does keep the target alive.
+            target = null;
+            System.GC.Collect();
+            Assert.IsNotNull(wr.Target);
+
+            fireEvent(source);
+            target = (EventTarget)wr.Target;
+            Assert.AreEqual(2, target.FireCount);
+        }
+
         [TestMethod]
         public void Test_BasicEvent_Subscribe_IsWeak()
         {
-            TestSubscribe(
+            TestWeakSubscribe(
                 (target, source) => source.BasicEvent += target.EventHandler,
                 source => source.FireBasicEvent()
             );
@@ -95,7 +126,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_BasicEvent_Unsubscribe_IsWeak()
         {
-            TestUnsubscribe(
+            TestWeakUnsubscribe(
                 (target, source) => source.BasicEvent += target.EventHandler,
                 source => source.FireBasicEvent(),
                 (target, source) => source.BasicEvent -= target.EventHandler,
@@ -106,7 +137,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_NonGenericEvent_Subscribe_IsWeak()
         {
-            TestSubscribe(
+            TestWeakSubscribe(
                 (target, source) => source.NonGenericEvent += target.EventHandler,
                 source => source.FireNonGenericEvent()
             );
@@ -115,7 +146,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_NonGenericEvent_Unsubscribe_IsWeak()
         {
-            TestUnsubscribe(
+            TestWeakUnsubscribe(
                 (target, source) => source.NonGenericEvent += target.EventHandler,
                 source => source.FireNonGenericEvent(),
                 (target, source) => source.NonGenericEvent -= target.EventHandler,
@@ -126,7 +157,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_GenericEvent_Subscribe_IsWeak()
         {
-            TestSubscribe(
+            TestWeakSubscribe(
                 (target, source) => source.GenericEvent += target.EventHandler,
                 source => source.FireGenericEvent()
             );
@@ -135,7 +166,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_GenericEvent_Unsubscribe_IsWeak()
         {
-            TestUnsubscribe(
+            TestWeakUnsubscribe(
                 (target, source) => source.GenericEvent += target.EventHandler,
                 source => source.FireGenericEvent(),
                 (target, source) => source.GenericEvent -= target.EventHandler,
@@ -146,7 +177,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void StaticEvent_Subscribe_IsWeak()
         {
-            TestSubscribe(
+            TestWeakSubscribe(
                 (target, source) => source.SubscribeStaticEvent(target.EventHandler),
                 source => source.FireStaticGenericEvent()
             );
@@ -155,7 +186,7 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void StaticEvent_Unsubscribe_IsWeak()
         {
-            TestUnsubscribe(
+            TestWeakUnsubscribe(
                 (target, source) => source.SubscribeStaticEvent(target.EventHandler),
                 source => source.FireStaticGenericEvent(),
                 (target, source) => source.UnsubscribeStaticEvent(target.EventHandler),
@@ -166,33 +197,9 @@ namespace WeakEvents.Fody.Test
         [TestMethod]
         public void Test_CannotBeMadeWeak_Subscribe_IsStrong()
         {
-            // Confirm that an event that cannot be makde weak retains
-            // a strong reference to the target and still works.
-
-            // Setup event source, target & wire together
-            var target = new EventTarget();
-            var wr = new WeakReference(target);
-            var source = (IEventSource)_weaverHelper.GetInstance("AssemblyToProcessDotNet4.AutoWeakEventSource");
-            source.CannotBeMadeWeak += target.EventHandler;
-
-            // Confirm event fires correctly.
-            Assert.IsNotNull(wr.Target);
-            source.FireCannotBeMadeWeak();
-            Assert.AreEqual(1, target.FireCount);
-
-            // Confirm that the event source does keep the target alive.
-            target = null;
-            System.GC.Collect();
-            Assert.IsNotNull(wr.Target);
-
-            source.FireCannotBeMadeWeak();
-            target = (EventTarget)wr.Target;
-            Assert.AreEqual(2, target.FireCount);
-
-            // Test unsubscription
-            source.CannotBeMadeWeak -= target.EventHandler;
-            source.FireCannotBeMadeWeak();
-            Assert.AreEqual(2, target.FireCount);
+            TestStrongSubscribe(
+                (target, source) => source.CannotBeMadeWeak += target.EventHandler,
+                source => source.FireCannotBeMadeWeak());
         }
     }
 }
