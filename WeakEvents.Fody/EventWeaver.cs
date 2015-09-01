@@ -1,37 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using WeakEvents.Fody.IlEmit;
+using WeakEvents.Fody.IlEmit.Other;
 using WeakEvents.Fody.IlEmit.StandardIl;
 using WeakEvents.Fody.IlEmit.WeakEventRuntime;
-using WeakEvents.Fody.IlEmit.Other;
 
 namespace WeakEvents.Fody
 {
     class EventWeaver
     {
-        private ModuleDefinition _moduleDef;
-        private ILogger _logger;
-
-        // CompilerGeneratedAttribute
-        private CustomAttribute _compilerGeneratedAttribute;
-        // Action<T>.ctor()
-        private MethodReference _openActionTCtor;
-        // EventHandler<T>
-        private TypeReference _openEventHandlerT;
+        private readonly ModuleDefinition _moduleDef;
+        private readonly ILogger _logger;
+        private readonly ModuleImporter _moduleImporter;
 
         public EventWeaver(ModuleDefinition moduleDef, ILogger logger)
         {
             _moduleDef = moduleDef;
             _logger = logger;
-
-            _compilerGeneratedAttribute = LoadCompilerGeneratedAttribute(moduleDef);
-            _openActionTCtor = LoadOpenActionTConstructor(moduleDef);
-            _openEventHandlerT = LoadOpenEventHandlerT(moduleDef);
+            _moduleImporter = new ModuleImporter(moduleDef);
         }
 
         public void ProcessEvent(EventDefinition eventt)
@@ -123,7 +111,7 @@ namespace WeakEvents.Fody
             var closedEventHandlerT = GetEquivalentGenericEventHandler(eventDelegate);
             bool needsCast = !closedEventHandlerT.FullName.Equals(eventDelegate.FieldType.FullName);
 
-            var unsubscribeAction = method.NewObject(_openActionTCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
+            var unsubscribeAction = method.NewObject(_moduleImporter.ActionOpenCtor.MakeDeclaringTypeClosedGeneric(closedEventHandlerT), method.LoadMethod(unsubscribe));
             IlEmitter genericHandler = method.LoadMethod1stArg();
             if (needsCast)
             {
@@ -157,7 +145,7 @@ namespace WeakEvents.Fody
             unsubscribe.Parameters.Add(new ParameterDefinition(closedEventHandlerT));
 
             // [CompilerGenerated]
-            unsubscribe.CustomAttributes.Add(_compilerGeneratedAttribute);
+            unsubscribe.CustomAttributes.Add(_moduleImporter.CompilerGeneratedAttribute);
 
             eventt.DeclaringType.Methods.Add(unsubscribe);
 
@@ -189,7 +177,7 @@ namespace WeakEvents.Fody
         private GenericInstanceType GetEquivalentGenericEventHandler(FieldReference eventDelegate)
         {
             TypeReference eventArgsType = _moduleDef.Import(eventDelegate.FieldType.GetEventArgsType());
-            return _openEventHandlerT.MakeGenericInstanceType(eventArgsType);
+            return _moduleImporter.EventHandlerT.MakeGenericInstanceType(eventArgsType);
         }
 
         // The opcode to load a methods 1st real argument varies depending on the static modifier.
@@ -202,36 +190,5 @@ namespace WeakEvents.Fody
 
             return Code.Ldarg_1;
         }
-
-        #region Static type & method loaders
-
-        private static CustomAttribute LoadCompilerGeneratedAttribute(ModuleDefinition moduleDef)
-        {
-            var compilerGeneratedDefinition = moduleDef.Import(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute));
-            var compilerGeneratedCtor = moduleDef.Import(compilerGeneratedDefinition.Resolve().Methods.Single(m => m.IsConstructor && m.Parameters.Count == 0));
-            return new CustomAttribute(compilerGeneratedCtor);
-        }
-
-        private static MethodReference LoadOpenActionTConstructor(ModuleDefinition moduleDef)
-        {
-            var actionDefinition = moduleDef.Import(typeof(System.Action<>)).Resolve();
-            return moduleDef.Import(
-                actionDefinition.Methods
-                    .Single(x =>
-                        x.IsConstructor &&
-                        x.Parameters.Count == 2 &&
-                        x.Parameters[0].ParameterType.FullName == SysObjectName &&
-                        x.Parameters[1].ParameterType.FullName == IntPtrName));
-        }
-
-        private static TypeReference LoadOpenEventHandlerT(ModuleDefinition moduleDef)
-        {
-            return moduleDef.Import(typeof(System.EventHandler<>));
-        }
-
-        private static string SysObjectName = typeof(System.Object).FullName;
-        private static string IntPtrName = typeof(System.IntPtr).FullName;
-
-        #endregion
     }
 }
