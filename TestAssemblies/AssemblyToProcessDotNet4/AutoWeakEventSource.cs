@@ -8,6 +8,7 @@ namespace AssemblyToProcessDotNet4
 
     // The class which we weave to implement weak events
     [ImplementWeakEvents]
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class AutoWeakEventSource : TestInterfaces.IEventSource
     {
         public event EventHandler BasicEvent;
