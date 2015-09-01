@@ -39,7 +39,7 @@ namespace WeakEvents.Fody
         {
             LogDebug("Beginning weak event weaving");
 
-            var weakEventWeaver = new WeakEventWeaver(ModuleDefinition, this);
+            var weakEventWeaver = new EventWeaver(ModuleDefinition, this);
 
             foreach (var typeDef in ModuleDefinition.Types)
             {
@@ -68,7 +68,7 @@ namespace WeakEvents.Fody
             }
         }
 
-        private void ProcessType(TypeDefinition typeToWeave, WeakEventWeaver weakEventWeaver)
+        private void ProcessType(TypeDefinition typeToWeave, EventWeaver weakEventWeaver)
         {
             LogDebug("Beginning weak event weaving for " + typeToWeave.FullName);
 
