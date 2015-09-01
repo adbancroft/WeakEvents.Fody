@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace WeakEvents.Fody
 {
@@ -29,6 +30,13 @@ namespace WeakEvents.Fody
 
         // EventHandler<T>
         public TypeReference EventHandlerT { get { return _openEventHandlerT.Value; } }
+
+        // EventHandler<genericArg>
+        public GenericInstanceType GetClosedEventHandlerT(TypeReference genericArg)
+        {
+            TypeReference eventArgsType = _moduleDef.Import(genericArg);
+            return EventHandlerT.MakeGenericInstanceType(eventArgsType);
+        }
 
         private CustomAttribute LoadCompilerGeneratedAttribute()
         {

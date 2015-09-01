@@ -22,7 +22,7 @@ namespace WeakEvents.Fody
         {
             _eventDelegate = eventDelegate.Resolve();
             _moduleimporter = moduleimporter;
-            _closedGenericEventHandler = GetEquivalentGenericEventHandler(eventDelegate);
+            _closedGenericEventHandler = moduleimporter.GetClosedEventHandlerT(eventDelegate.FieldType.GetEventArgsType());
             _isGenericHandler = _closedGenericEventHandler.FullName.Equals(eventDelegate.FieldType.FullName);
         }
 
@@ -110,13 +110,6 @@ namespace WeakEvents.Fody
             if (_eventDelegate.IsStatic)
                 attributes = attributes | MethodAttributes.Static;
             return attributes;
-        }
-
-        private GenericInstanceType GetEquivalentGenericEventHandler(FieldReference eventDelegate)
-        {
-            var moduleDef = eventDelegate.DeclaringType.Module;
-            TypeReference eventArgsType = moduleDef.Import(eventDelegate.FieldType.GetEventArgsType());
-            return _moduleimporter.EventHandlerT.MakeGenericInstanceType(eventArgsType);
         }
     }
 }
