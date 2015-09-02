@@ -46,7 +46,7 @@ namespace WeakEvents.Fody
 
             _eventDelegate.DeclaringType.Methods.Add(unsubscribe);
 
-            var rootEmitter = new EmptyEmitter(unsubscribe);
+            var rootEmitter = new EmptyEmitter(unsubscribe, _moduleimporter);
             var weakHandler = rootEmitter.LoadMethod1stArg();
             if (!_isGenericHandler)
             {
@@ -67,7 +67,7 @@ namespace WeakEvents.Fody
         // <event type> b = (<event type>)FindWeak(<source delegate>, (EventHandler< eventargsType >)value);
         public IlEmitter GenerateFindWeakIl(MethodDefinition method, VariableDefinition weakEventHandler)
         {
-            var rootEmitter = new EmptyEmitter(method);
+            var rootEmitter = new EmptyEmitter(method, _moduleimporter);
 
             var handler = rootEmitter.LoadMethod1stArg();
             if (!_isGenericHandler)
@@ -87,7 +87,7 @@ namespace WeakEvents.Fody
         // i.e. <event type> b = (EventHandler)MakeWeak((EventHandler< eventargsType >)value, new Action<(EventHandler< eventargsType >)>(this.<woven unsubscribe action>));
         public IlEmitter GenerateMakeWeakIl(MethodDefinition method, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
-            var rootEmitter = new EmptyEmitter(method);
+            var rootEmitter = new EmptyEmitter(method, _moduleimporter);
 
             var unsubscribeAction = rootEmitter.NewObject(_moduleimporter.ActionOpenCtor.MakeDeclaringTypeClosedGeneric(_closedGenericEventHandler), rootEmitter.LoadMethod(unsubscribe));
             IlEmitter genericHandler = rootEmitter.LoadMethod1stArg();

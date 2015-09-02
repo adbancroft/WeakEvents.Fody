@@ -19,6 +19,9 @@ namespace WeakEvents.Fody.IlEmit
 
         // The method the instructions are for.
         MethodDefinition Method { get; }
+
+        // A class to import items into the module
+        ModuleImporter Importer { get; }
     }
 
     // Base emitter that encapsulates common concepts
@@ -42,5 +45,8 @@ namespace WeakEvents.Fody.IlEmit
 
         // Chain the method definition.
         public MethodDefinition Method { get { return _preceedingCode.Method; } }
+
+        // Chain the importer.
+        public ModuleImporter Importer { get { return _preceedingCode.Importer; } }
     }
 }

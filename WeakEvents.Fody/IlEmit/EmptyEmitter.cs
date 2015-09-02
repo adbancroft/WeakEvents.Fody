@@ -9,15 +9,17 @@ namespace WeakEvents.Fody.IlEmit
     // Empty emitter. Will usually be the root of an emitter chain.
     class EmptyEmitter : IlEmitter
     {
-        private MethodDefinition _method;
+        private readonly MethodDefinition _method;
+        private readonly ModuleImporter _importer;
 
         public EmptyEmitter(IlEmitter template)
-            : this(template.Method)
+            : this(template.Method, template.Importer)
         {
         }
-        public EmptyEmitter(MethodDefinition method)
+        public EmptyEmitter(MethodDefinition method, ModuleImporter importer)
         {
             _method = method;
+            _importer = importer;
         }
 
         public IEnumerable<Instruction> Emit()
@@ -28,6 +30,12 @@ namespace WeakEvents.Fody.IlEmit
         public MethodDefinition Method
         {
             get { return _method; }
+        }
+
+
+        public ModuleImporter Importer
+        {
+            get { return _importer; }
         }
     }
 }
