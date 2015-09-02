@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
+using WeakEvents.Runtime;
 
 namespace WeakEvents.Fody
 {
@@ -73,13 +74,7 @@ namespace WeakEvents.Fody
         private MethodReference LoadOpenActionTConstructor()
         {
             var actionDefinition = _moduleDef.Import(typeof(System.Action<>)).Resolve();
-            return _moduleDef.Import(
-                actionDefinition.Methods
-                    .Single(x =>
-                        x.IsConstructor &&
-                        x.Parameters.Count == 2 &&
-                        x.Parameters[0].ParameterType.FullName == SysObjectName &&
-                        x.Parameters[1].ParameterType.FullName == IntPtrName));
+            return _moduleDef.Import(actionDefinition.Methods.Single(x => x.IsConstructor));
         }
 
         private TypeReference LoadOpenEventHandlerT()
@@ -89,69 +84,34 @@ namespace WeakEvents.Fody
 
         private MethodReference LoadDelegateRemoveMethodDefinition()
         {
-            var delegateReference = _moduleDef.Import(typeof(System.Delegate));
-            var delegateDefinition = delegateReference.Resolve();
-            var methodDefinition = delegateDefinition.Methods
-                .Single(x =>
-                    x.Name == "Remove" &&
-                    x.Parameters.Count == 2 &&
-                    x.Parameters.All(p => p.ParameterType == delegateDefinition));
-            return _moduleDef.Import(methodDefinition);
+            System.Reflection.MethodInfo remove = typeof(Delegate).GetMethod("Remove", new [] { typeof(Delegate), typeof(Delegate) });
+            return _moduleDef.Import(remove);
         }
 
         private MethodReference LoadGetTypeFromHandle()
         {
-            System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new Type[] { typeof(RuntimeTypeHandle) });
+            System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new [] { typeof(RuntimeTypeHandle) });
             return _moduleDef.Import(getTypeFromHandleReflect);
         }
 
         private MethodReference LoadDelegateConvertChangeType()
         {
-            var classDef = _moduleDef.Import(typeof(WeakEvents.Runtime.DelegateConvert)).Resolve();
-            return _moduleDef.Import(
-                classDef.Methods
-                    .Single(x =>
-                          x.Name.Equals("ChangeType")
-                       && x.HasParameters
-                       && x.Parameters.Count == 2
-                       && x.Parameters[0].ParameterType.FullName.Equals(DelegateName)
-                       && x.Parameters[1].ParameterType.FullName.Equals(TypeName)));
+            System.Reflection.MethodInfo changeType = typeof(DelegateConvert).GetMethod("ChangeType", new [] { typeof(Delegate), typeof(Type) });
+            return _moduleDef.Import(changeType);
         }
 
         private MethodReference LoadOpenFindWeakT()
         {
-            var wehExtensionsReference = _moduleDef.Import(typeof(WeakEvents.Runtime.WeakEventHandlerExtensions));
-            var wehExtensionsDefinition = wehExtensionsReference.Resolve();
-            var makeWeakMethodDefinition = wehExtensionsDefinition.Methods.Single(
-                x => x.Name == "FindWeak"
-                    && x.HasParameters
-                    && x.Parameters.Count == 2
-                    && x.Parameters[0].ParameterType.FullName.Equals(DelegateName)
-                    && x.CallingConvention == MethodCallingConvention.Generic
-                    && x.HasGenericParameters
-                    && x.GenericParameters[0].HasConstraints
-                    && x.GenericParameters[0].Constraints[0].FullName.Equals(SysEventArgsName)
-            );
-            return _moduleDef.Import(makeWeakMethodDefinition);
+            System.Reflection.MethodInfo findWeak = typeof(WeakEventHandlerExtensions).GetMethod("FindWeak");
+            return _moduleDef.Import(findWeak);
         }
 
         private MethodReference LoadOpenMakeWeakT()
         {
-            var wehExtensionsReference = _moduleDef.Import(typeof(WeakEvents.Runtime.WeakEventHandlerExtensions));
-            var wehExtensionsDefinition = wehExtensionsReference.Resolve();
-            var makeWeakMethodDefinition = wehExtensionsDefinition.Methods.Single(
-                x => x.Name == "MakeWeak"
-                    && x.CallingConvention == MethodCallingConvention.Generic
-                    && x.HasGenericParameters
-                    && x.GenericParameters[0].HasConstraints
-                    && x.GenericParameters[0].Constraints[0].FullName.Equals(SysEventArgsName)
-            );
-            return _moduleDef.Import(makeWeakMethodDefinition);
+            System.Reflection.MethodInfo makeWeak = typeof(WeakEventHandlerExtensions).GetMethod("MakeWeak");
+            return _moduleDef.Import(makeWeak);
         }
 
-        private static string SysEventArgsName = typeof(System.EventArgs).FullName; 
-        private static string DelegateName = typeof(System.Delegate).FullName;
-        private static string TypeName = typeof(System.Type).FullName;
         private static string SysObjectName = typeof(System.Object).FullName;
         private static string IntPtrName = typeof(System.IntPtr).FullName;
     }
