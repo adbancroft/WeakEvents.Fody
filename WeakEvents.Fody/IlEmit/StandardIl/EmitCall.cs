@@ -31,9 +31,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitCall(preceedingCode, targetMethod, methodParameters);
         }
-        public static IlEmitter Call(this MethodDefinition method, MethodReference targetMethod, params IlEmitter[] methodParameters)
-        {
-            return Call(new EmptyEmitter(method), targetMethod, methodParameters);
-        }
     }
 }

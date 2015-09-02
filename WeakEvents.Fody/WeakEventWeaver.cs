@@ -46,18 +46,19 @@ namespace WeakEvents.Fody
 
             _eventDelegate.DeclaringType.Methods.Add(unsubscribe);
 
-            var weakHandler = unsubscribe.LoadMethod1stArg();
+            var rootEmitter = new EmptyEmitter(unsubscribe);
+            var weakHandler = rootEmitter.LoadMethod1stArg();
             if (!_isGenericHandler)
             {
-                weakHandler = unsubscribe.DelegateConvert(weakHandler, _eventDelegate.FieldType);
+                weakHandler = rootEmitter.DelegateConvert(weakHandler, _eventDelegate.FieldType);
             }
-            var removeFromFieldDelegate = unsubscribe.CallDelegateRemove(unsubscribe.LoadField(_eventDelegate), weakHandler);
+            var removeFromFieldDelegate = rootEmitter.CallDelegateRemove(rootEmitter.LoadField(_eventDelegate), weakHandler);
             var compatibleHandler = removeFromFieldDelegate;
             if (!_isGenericHandler)
             {
-                compatibleHandler = unsubscribe.DelegateConvert(removeFromFieldDelegate, _eventDelegate.FieldType);
+                compatibleHandler = rootEmitter.DelegateConvert(removeFromFieldDelegate, _eventDelegate.FieldType);
             }
-            var instructions = unsubscribe.StoreField(compatibleHandler, _eventDelegate).Return();
+            var instructions = rootEmitter.StoreField(compatibleHandler, _eventDelegate).Return();
             unsubscribe.InsertInstructions(instructions, 0);
 
             return unsubscribe;
@@ -66,37 +67,41 @@ namespace WeakEvents.Fody
         // <event type> b = (<event type>)FindWeak(<source delegate>, (EventHandler< eventargsType >)value);
         public IlEmitter GenerateFindWeakIl(MethodDefinition method, VariableDefinition weakEventHandler)
         {
-            var handler = method.LoadMethod1stArg();
+            var rootEmitter = new EmptyEmitter(method);
+
+            var handler = rootEmitter.LoadMethod1stArg();
             if (!_isGenericHandler)
             {
-                handler = method.DelegateConvert(handler, _closedGenericEventHandler);
+                handler = rootEmitter.DelegateConvert(handler, _closedGenericEventHandler);
             }
-            var callFindWeak = method.FindWeak(_closedGenericEventHandler, method.LoadField(_eventDelegate), handler);
+            var callFindWeak = rootEmitter.FindWeak(_closedGenericEventHandler, rootEmitter.LoadField(_eventDelegate), handler);
 
             if (!_isGenericHandler)
             {
-                return method.Store(weakEventHandler, method.DelegateConvert(callFindWeak, _eventDelegate.FieldType));
+                return rootEmitter.Store(weakEventHandler, rootEmitter.DelegateConvert(callFindWeak, _eventDelegate.FieldType));
             }
-            return method.Store(weakEventHandler, callFindWeak);
+            return rootEmitter.Store(weakEventHandler, callFindWeak);
         }
 
         // Wrap the method parameter in a weak event handler and store in a variable.
         // i.e. <event type> b = (EventHandler)MakeWeak((EventHandler< eventargsType >)value, new Action<(EventHandler< eventargsType >)>(this.<woven unsubscribe action>));
         public IlEmitter GenerateMakeWeakIl(MethodDefinition method, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
-            var unsubscribeAction = method.NewObject(_moduleimporter.ActionOpenCtor.MakeDeclaringTypeClosedGeneric(_closedGenericEventHandler), method.LoadMethod(unsubscribe));
-            IlEmitter genericHandler = method.LoadMethod1stArg();
+            var rootEmitter = new EmptyEmitter(method);
+
+            var unsubscribeAction = rootEmitter.NewObject(_moduleimporter.ActionOpenCtor.MakeDeclaringTypeClosedGeneric(_closedGenericEventHandler), rootEmitter.LoadMethod(unsubscribe));
+            IlEmitter genericHandler = rootEmitter.LoadMethod1stArg();
             if (!_isGenericHandler)
             {
-                genericHandler = method.DelegateConvert(genericHandler, _closedGenericEventHandler);
+                genericHandler = rootEmitter.DelegateConvert(genericHandler, _closedGenericEventHandler);
             }
-            var genericWeakHandler = method.MakeWeak(_closedGenericEventHandler, genericHandler, unsubscribeAction);
+            var genericWeakHandler = rootEmitter.MakeWeak(_closedGenericEventHandler, genericHandler, unsubscribeAction);
 
             if (!_isGenericHandler)
             {
-                return method.Store(weakEventHandler, method.DelegateConvert(genericWeakHandler, _eventDelegate.FieldType));
+                return rootEmitter.Store(weakEventHandler, rootEmitter.DelegateConvert(genericWeakHandler, _eventDelegate.FieldType));
             }
-            return method.Store(weakEventHandler, genericWeakHandler);
+            return rootEmitter.Store(weakEventHandler, genericWeakHandler);
         }
 
         public VariableDefinition CreateEventHandlerVariable(MethodDefinition method)

@@ -38,9 +38,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitFieldLoad(preceedingCode, field);
         }
-        public static IlEmitter LoadField(this MethodDefinition method, FieldReference field)
-        {
-            return LoadField(new EmptyEmitter(method), field);
-        }
     }
 }

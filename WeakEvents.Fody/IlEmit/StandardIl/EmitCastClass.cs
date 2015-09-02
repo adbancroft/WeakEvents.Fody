@@ -28,9 +28,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitCastClass(preceedingCode, targetType);
         }
-        public static IlEmitter CastClass(this MethodDefinition method, TypeReference targetType)
-        {
-            return CastClass(new EmptyEmitter(method), targetType);
-        }
     }
 }

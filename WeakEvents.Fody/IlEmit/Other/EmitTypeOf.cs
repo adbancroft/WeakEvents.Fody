@@ -15,7 +15,7 @@ namespace WeakEvents.Fody.IlEmit.Other
         public EmitTypeOf(IlEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)
         {
-            _inner = Method.Call(LoadGetTypeFromHandle(), Method.LdToken(targetType));
+            _inner = new EmptyEmitter(preceedingCode).Call(LoadGetTypeFromHandle(), new EmptyEmitter(preceedingCode).LdToken(targetType));
         }
 
         public override IEnumerable<Instruction> Emit()
@@ -36,10 +36,6 @@ namespace WeakEvents.Fody.IlEmit.Other
         public static IlEmitter TypeOf(this IlEmitter preceedingCode, TypeReference targetType)
         {
             return new EmitTypeOf(preceedingCode, targetType);
-        }
-        public static IlEmitter TypeOf(this MethodDefinition method, TypeReference targetType)
-        {
-            return TypeOf(new EmptyEmitter(method), targetType);
         }
     }
 }

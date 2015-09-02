@@ -30,9 +30,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitLoadMethod1stArg(preceedingCode);
         }
-        public static IlEmitter LoadMethod1stArg(this MethodDefinition method)
-        {
-            return LoadMethod1stArg(new EmptyEmitter(method));
-        }
     }
 }

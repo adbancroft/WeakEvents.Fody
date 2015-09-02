@@ -15,7 +15,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             var openFindWeak = LoadOpenFindWeakT();
-            _inner = Method.Call(openFindWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandlerDelegate, strongEventHandler);
+            _inner = new EmptyEmitter(preceedingCode).Call(openFindWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandlerDelegate, strongEventHandler);
         }
 
         public override IEnumerable<Instruction> Emit()
@@ -50,10 +50,6 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
         public static IlEmitter FindWeak(this IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandlerDelegate, IlEmitter strongEventHandler)
         {
             return new EmitFindWeak(preceedingCode, closedHandlerType, eventHandlerDelegate, strongEventHandler);
-        }
-        public static IlEmitter FindWeak(this MethodDefinition method, GenericInstanceType closedHandlerType, IlEmitter eventHandlerDelegate, IlEmitter strongEventHandler)
-        {
-            return FindWeak(new EmptyEmitter(method), closedHandlerType, eventHandlerDelegate, strongEventHandler);
         }
     }
 }

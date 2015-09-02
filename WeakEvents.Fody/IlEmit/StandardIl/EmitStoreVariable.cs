@@ -31,9 +31,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitStoreVariable(preceedingCode, variableDef, variableValueGenerator);
         }
-        public static IlEmitter Store(this MethodDefinition method, VariableDefinition variableDef, IlEmitter variableValueGenerator)
-        {
-            return Store(new EmptyEmitter(method), variableDef, variableValueGenerator);
-        }
     }
 }

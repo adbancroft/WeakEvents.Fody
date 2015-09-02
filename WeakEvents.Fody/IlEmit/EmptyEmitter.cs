@@ -11,6 +11,10 @@ namespace WeakEvents.Fody.IlEmit
     {
         private MethodDefinition _method;
 
+        public EmptyEmitter(IlEmitter template)
+            : this(template.Method)
+        {
+        }
         public EmptyEmitter(MethodDefinition method)
         {
             _method = method;

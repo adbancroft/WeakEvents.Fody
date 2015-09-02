@@ -25,9 +25,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitReturn(preceedingCode);
         }
-        public static IlEmitter Return(this MethodDefinition method)
-        {
-            return Return(new EmptyEmitter(method));
-        }
     }
 }

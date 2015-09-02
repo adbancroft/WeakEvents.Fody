@@ -28,9 +28,5 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             return new EmitLdToken(preceedingCode, targetType);
         }
-        public static IlEmitter LdToken(this MethodDefinition method, TypeReference targetType)
-        {
-            return LdToken(new EmptyEmitter(method), targetType);
-        }
     }
 }

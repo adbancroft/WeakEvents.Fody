@@ -17,7 +17,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             var openMakeWeak = LoadOpenMakeWeakT();
-            _inner = Method.Call(openMakeWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandler, unsubscribe);
+            _inner = new EmptyEmitter(preceedingCode).Call(openMakeWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandler, unsubscribe);
         }
 
         public override IEnumerable<Instruction> Emit()
@@ -48,10 +48,6 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
         public static IlEmitter MakeWeak(this IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandler, IlEmitter unsubscribe)
         {
             return new EmitMakeWeak(preceedingCode, closedHandlerType, eventHandler, unsubscribe);
-        }
-        public static IlEmitter MakeWeak(this MethodDefinition method, GenericInstanceType closedHandlerType, IlEmitter eventHandler, IlEmitter unsubscribe)
-        {
-            return MakeWeak(new EmptyEmitter(method), closedHandlerType, eventHandler, unsubscribe);
         }
     }
 }
