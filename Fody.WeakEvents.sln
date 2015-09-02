@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyToProcessDotNet4", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeakEvents.Fody.Test", "WeakEvents.Fody.Test\WeakEvents.Fody.Test.csproj", "{86910839-9F42-4066-B943-5C6337BDAB3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInterfaces", "TestInterfaces\TestInterfaces.csproj", "{73236FCB-8DFA-4E2E-9C97-353051CD8A1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestInterfaces", "TestAssemblies\TestInterfaces\TestInterfaces.csproj", "{73236FCB-8DFA-4E2E-9C97-353051CD8A1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

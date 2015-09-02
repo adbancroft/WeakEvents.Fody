@@ -50,13 +50,13 @@
     <Compile Include="StrongEvents.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TestInterfaces\TestInterfaces.csproj">
-      <Project>{73236fcb-8dfa-4e2e-9c97-353051cd8a1a}</Project>
-      <Name>TestInterfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\WeakEvents\WeakEvents.csproj">
       <Project>{f17dfff7-cf29-4451-9300-3901ba10dd21}</Project>
       <Name>WeakEvents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestInterfaces\TestInterfaces.csproj">
+      <Project>{73236fcb-8dfa-4e2e-9c97-353051cd8a1a}</Project>
+      <Name>TestInterfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
