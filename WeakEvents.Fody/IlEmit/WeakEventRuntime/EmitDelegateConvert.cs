@@ -16,7 +16,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
             : base(preceedingCode)
         {
             _inner = new EmptyEmitter(preceedingCode)
-                        .Call(LoadDelegateConvertChangeType(), itemToConvert, new EmptyEmitter(preceedingCode).TypeOf(targetType))
+                        .Call(Importer.DelegateConvertChangeType, itemToConvert, new EmptyEmitter(preceedingCode).TypeOf(targetType))
                         .CastClass(targetType);
         }
 
@@ -24,23 +24,6 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
         {
             return EmitPreceeding().Concat(_inner.Emit());
         }
-
-        private MethodReference LoadDelegateConvertChangeType()
-        {
-            var moduleDef = Method.Module;
-            var classDef = moduleDef.Import(typeof(WeakEvents.Runtime.DelegateConvert)).Resolve();
-            return moduleDef.Import(
-                classDef.Methods
-                    .Single(x =>
-                          x.Name.Equals("ChangeType")
-                       && x.HasParameters
-                       && x.Parameters.Count == 2
-                       && x.Parameters[0].ParameterType.FullName.Equals(DelegateName)
-                       && x.Parameters[1].ParameterType.FullName.Equals(TypeName)));
-        }
-
-        private static string DelegateName = typeof(System.Delegate).FullName;
-        private static string TypeName = typeof(System.Type).FullName;
     }
 
     static partial class EmitterExtensions

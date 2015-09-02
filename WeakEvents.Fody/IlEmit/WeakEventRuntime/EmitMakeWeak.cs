@@ -16,7 +16,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
         public EmitMakeWeak(IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandler, IlEmitter unsubscribe)
             : base(preceedingCode)
         {
-            var openMakeWeak = LoadOpenMakeWeakT();
+            var openMakeWeak = Importer.OpenMakeWeakT;
             _inner = new EmptyEmitter(preceedingCode).Call(openMakeWeak.MakeMethodClosedGeneric(closedHandlerType.GenericArguments[0]), eventHandler, unsubscribe);
         }
 
@@ -24,23 +24,6 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
         {
             return EmitPreceeding().Concat(_inner.Emit());
         }
-
-        private MethodReference LoadOpenMakeWeakT()
-        {
-            var moduleDef = Method.Module;
-            var wehExtensionsReference = moduleDef.Import(typeof(WeakEvents.Runtime.WeakEventHandlerExtensions));
-            var wehExtensionsDefinition = wehExtensionsReference.Resolve();
-            var makeWeakMethodDefinition = wehExtensionsDefinition.Methods.Single(
-                x => x.Name == "MakeWeak"
-                    && x.CallingConvention == MethodCallingConvention.Generic
-                    && x.HasGenericParameters
-                    && x.GenericParameters[0].HasConstraints
-                    && x.GenericParameters[0].Constraints[0].FullName.Equals(SysEventArgsName)
-            );
-            return moduleDef.Import(makeWeakMethodDefinition);
-        }
-
-        private static string SysEventArgsName = typeof(System.EventArgs).FullName;
     }
 
     static partial class EmitterExtensions

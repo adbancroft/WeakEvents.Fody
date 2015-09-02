@@ -14,25 +14,12 @@ namespace WeakEvents.Fody.IlEmit.Other
         public EmitDelegateRemove(IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
             : base(preceedingCode)
         {
-            _inner = new EmptyEmitter(preceedingCode).Call(LoadDelegateRemoveMethodDefinition(), itemToRemoveFrom, itemToRemove);
+            _inner = new EmptyEmitter(preceedingCode).Call(Importer.DelegateRemove, itemToRemoveFrom, itemToRemove);
         }
 
         public override IEnumerable<Instruction> Emit()
         {
             return EmitPreceeding().Concat(_inner.Emit());
-        }
-
-        private MethodReference LoadDelegateRemoveMethodDefinition()
-        {
-            var moduleDef = Method.Module;
-            var delegateReference = moduleDef.Import(typeof(System.Delegate));
-            var delegateDefinition = delegateReference.Resolve();
-            var methodDefinition = delegateDefinition.Methods
-                .Single(x =>
-                    x.Name == "Remove" &&
-                    x.Parameters.Count == 2 &&
-                    x.Parameters.All(p => p.ParameterType == delegateDefinition));
-            return moduleDef.Import(methodDefinition);
         }
     }
 

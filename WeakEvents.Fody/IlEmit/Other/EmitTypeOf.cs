@@ -15,19 +15,12 @@ namespace WeakEvents.Fody.IlEmit.Other
         public EmitTypeOf(IlEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)
         {
-            _inner = new EmptyEmitter(preceedingCode).Call(LoadGetTypeFromHandle(), new EmptyEmitter(preceedingCode).LdToken(targetType));
+            _inner = new EmptyEmitter(preceedingCode).Call(Importer.GetTypeFromHandle, new EmptyEmitter(preceedingCode).LdToken(targetType));
         }
 
         public override IEnumerable<Instruction> Emit()
         {
             return EmitPreceeding().Concat(_inner.Emit());
-        }
-
-        private MethodReference LoadGetTypeFromHandle()
-        {
-            var moduleDef = Method.Module;
-            System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new Type[] { typeof(RuntimeTypeHandle) });
-            return moduleDef.Import(getTypeFromHandleReflect);
         }
     }
 
