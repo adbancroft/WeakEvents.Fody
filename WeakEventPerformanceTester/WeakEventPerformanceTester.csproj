@@ -15,7 +15,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <NuGetPackageImportStamp>e60d35a0</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>a52babd1</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,17 +51,34 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WeakEvents.Runtime\WeakEvents.Runtime.csproj">
       <Project>{8f8b79b0-dd65-46d7-a685-34e8242838e8}</Project>
       <Name>WeakEvents.Runtime</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
+    <ProjectReference Include="..\WeakEvents\WeakEvents.csproj">
+      <Project>{f17dfff7-cf29-4451-9300-3901ba10dd21}</Project>
+      <Name>WeakEvents</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
+  </Target>
+  <PropertyGroup>
+    <PreBuildEvent>rd /s/q $(SolutionDir)Tools
+md $(SolutionDir)Tools
+copy $(SolutionDir)WeakEvents.Fody\bin\Debug\*.dll $(SolutionDir)Tools</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

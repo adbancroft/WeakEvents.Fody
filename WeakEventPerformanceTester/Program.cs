@@ -4,74 +4,92 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WeakEvents.Runtime;
+using WeakEvents;
 
 namespace WeakEventPerformanceTester
 {
-    class Program
+    class EventTarget
     {
-        public event EventHandler<EventArgs> StrongEventT;
-
-        private EventHandler<EventArgs> _weakEventT;
-        public event EventHandler<EventArgs> WeakEventT
-        {
-            add { _weakEventT += value.MakeWeak(eventHandler => _weakEventT -= eventHandler); }
-            remove { _weakEventT -= _weakEventT.FindWeak(value); }
-        }
-
-        private void OnEventHandler(object sender, EventArgs args)
+        public void OnEventHandler(object sender, EventArgs args)
         {
             // No-op
         }
+    }
 
+    interface IEventSource
+    {
+        event EventHandler<EventArgs> GenericEvent;
+        void InvokeEvent(EventArgs args);
+    }
+
+    class StrongEventSource : IEventSource
+    {
+        public event EventHandler<EventArgs> GenericEvent;
+        public void InvokeEvent(EventArgs args)
+        {
+            GenericEvent(this, args);
+        }
+    }
+
+    [ImplementWeakEvents]
+    class WeakEventSource : IEventSource
+    {
+        public event EventHandler<EventArgs> GenericEvent;
+        public void InvokeEvent(EventArgs args)
+        {
+            GenericEvent(this, args);
+        }
+    }
+
+    class Program
+    {
         private const int numEvents = 2000;
         private const int numFiring = 5000;
 
-        private long AddHandler(Action addHandler)
+        private long AddHandler(IEventSource source, EventTarget target)
         {
             var stopwatch = Stopwatch.StartNew();
             for (int n = 0; n < numEvents; ++n)
             {
-                addHandler();
+                source.GenericEvent += target.OnEventHandler;
             }
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private long InvokeHandler<TEventArgs>(Action<object, TEventArgs> invokeHandler)
-            where TEventArgs : EventArgs, new()
+        private long InvokeHandler(IEventSource source)
         {
             var stopwatch = Stopwatch.StartNew();
-            TEventArgs args = new TEventArgs();
+            EventArgs args = new EventArgs();
             for (int n = 0; n < numFiring; ++n)
             {
-                invokeHandler(this, args);
+                source.InvokeEvent(args);
             }
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private long RemoveHandler(Action removeHandler)
+        private long RemoveHandler(IEventSource source, EventTarget target)
         {
             var stopwatch = Stopwatch.StartNew();
             for (int n = 0; n < numEvents; ++n)
             {
-                removeHandler();
+                source.GenericEvent -= target.OnEventHandler;
             }
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private void TestHandler<TEventArgs>(Action addHandler, Action<object, TEventArgs> invokeHandler, Action removeHandler)
-            where TEventArgs : EventArgs, new()
+        private void TestHandler(IEventSource source)
         {
             Console.WriteLine("Test result");
+            var target = new EventTarget();
 
             var stopwatch = Stopwatch.StartNew();
 
-            Console.WriteLine("\tAdd: " + AddHandler(addHandler) + "ms");
-            Console.WriteLine("\tInvoke: " + InvokeHandler(invokeHandler) + "ms");
-            Console.WriteLine("\tRemove: " + RemoveHandler(removeHandler) + "ms");
+            Console.WriteLine("\tAdd: " + AddHandler(source, target) + "ms");
+            Console.WriteLine("\tInvoke: " + InvokeHandler(source) + "ms");
+            Console.WriteLine("\tRemove: " + RemoveHandler(source, target) + "ms");
 
             stopwatch.Stop();
             Console.WriteLine("\tOverall: " + stopwatch.ElapsedMilliseconds + "ms");
@@ -79,15 +97,12 @@ namespace WeakEventPerformanceTester
 
         public void TestStrongEventHandlerT()
         {
-            TestHandler<EventArgs>(() => StrongEventT += OnEventHandler, (sender, args) => StrongEventT(sender, args), () => StrongEventT -= OnEventHandler);
+            TestHandler(new StrongEventSource());
         }
 
         public void TestWeakEventHandlerT()
         {
-            TestHandler<EventArgs>(
-                () => WeakEventT += OnEventHandler,
-                (sender, args) => _weakEventT(sender, args),
-                () => WeakEventT -= OnEventHandler);
+            TestHandler(new WeakEventSource());
         }
 
         static void Main(string[] args)
