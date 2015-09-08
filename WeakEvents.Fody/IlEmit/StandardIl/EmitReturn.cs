@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // OpCodes.Ret
-    class EmitReturn : IlEmitterBase
+    internal class EmitReturn : IlEmitterBase
     {
         public EmitReturn(IlEmitter preceedingCode)
             : base(preceedingCode)

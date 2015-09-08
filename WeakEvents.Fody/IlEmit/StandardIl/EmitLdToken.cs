@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // OpCodes.Ldtoken
-    class EmitLdToken : IlEmitterBase
+    internal class EmitLdToken : IlEmitterBase
     {
         private readonly TypeReference _targetType;
 

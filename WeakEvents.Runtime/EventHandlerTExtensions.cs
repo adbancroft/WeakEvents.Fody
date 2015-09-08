@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace WeakEvents.Runtime
 {
     /// <summary>
     /// Extension for returning a Weak EventHandler.  This is used in conjuction with WeakEventHandler.
-    /// 
-    /// Based on "Solving the Problem with Events: Weak Event Handlers" by Dustin Campbell, 
+    ///
+    /// Based on "Solving the Problem with Events: Weak Event Handlers" by Dustin Campbell,
     /// (see http://diditwith.net/PermaLink,guid,aacdb8ae-7baa-4423-a953-c18c1c7940ab.aspx)
     /// and licensed under Creative Commons Attribution 3.0 United States http://creativecommons.org/licenses/by/3.0/us/
     /// </summary>
@@ -41,7 +39,7 @@ namespace WeakEvents.Runtime
             }
             // We cannot make anonymous methods (including lambdas) into weak event handlers. Doing so could potentially
             // allow the anonymous method to be GC'd, since the only thing referring to it would be the weak reference.
-            // This would result in silent failures, as the event handler (the anonymous method) would no longer exist & 
+            // This would result in silent failures, as the event handler (the anonymous method) would no longer exist &
             // therefore never be called. In addition, this would happen somewhat randomly as it's dependent on GC timing.
             if (IsAnonymousMethod(eventHandler))
             {
@@ -88,12 +86,12 @@ namespace WeakEvents.Runtime
 
             // Look for the weak event handler in the invocation list
             IWeakEventHandler<TCustomArgs> wehForEh =
-                           (sourceEvent==null ? new Delegate[0] : sourceEvent.GetInvocationList())
+                           (sourceEvent == null ? new Delegate[0] : sourceEvent.GetInvocationList())
                            .Select(ExtractDelegateTarget)
                            .OfType<IWeakEventHandler<TCustomArgs>>()
                            .FirstOrDefault(weh => weh.IsHandlerFor(strongEventHandler));
 
-            if (wehForEh!=null)
+            if (wehForEh != null)
             {
                 return wehForEh.HandlerT;
             }
@@ -127,8 +125,8 @@ namespace WeakEvents.Runtime
             {
                 return WehType.IsAssignableFrom(declaringType.Method.DeclaringType);
             }
-            
-            // Performance - since this is a static generic class, there will be one instance per class generic argument. 
+
+            // Performance - since this is a static generic class, there will be one instance per class generic argument.
             // See http://stackoverflow.com/questions/3037203/are-static-members-of-a-generic-class-tied-to-the-specific-instance
             private static readonly Type WehType = typeof(IWeakEventHandler<>).MakeGenericType(typeof(TCustomArgs));
         }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.IO;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
-using WeakEvents.Fody;
 
 namespace WeakEvents.Fody.Test
 {
@@ -80,7 +77,7 @@ namespace WeakEvents.Fody.Test
 
             Assert.IsTrue(EventDefinitionExtensions.IsValidEventDelegate(eventRef.EventType));
         }
-        
+
         [TestMethod]
         public void IsValidEventDelegate_GenericEvent_True()
         {
@@ -105,7 +102,7 @@ namespace WeakEvents.Fody.Test
             Assert.IsTrue(EventDefinitionExtensions.IsValidEventDelegate(eventRef.EventType));
         }
 
-        #endregion
+        #endregion IsValidEventDelegate
 
         #region GetEventDelegate
 
@@ -114,7 +111,7 @@ namespace WeakEvents.Fody.Test
         {
             var eventRef = FindEvent(_eventWithUnknownBackingDelegate, "EventWithNoBackingDelegate");
 
-             Assert.IsNull(EventDefinitionExtensions.GetEventDelegate(eventRef));            
+            Assert.IsNull(EventDefinitionExtensions.GetEventDelegate(eventRef));
         }
 
         [TestMethod]
@@ -188,7 +185,7 @@ namespace WeakEvents.Fody.Test
 
             Assert.IsNotNull(EventDefinitionExtensions.GetEventDelegate(eventRef));
         }
-        
+
         [TestMethod]
         public void GetEventDelegate_StaticEventHandlerT_NotNull()
         {
@@ -197,7 +194,7 @@ namespace WeakEvents.Fody.Test
             Assert.IsNotNull(EventDefinitionExtensions.GetEventDelegate(eventRef));
         }
 
-        #endregion
+        #endregion GetEventDelegate
 
         #region GetEventArgsType
 
@@ -225,6 +222,6 @@ namespace WeakEvents.Fody.Test
             Assert.AreEqual(typeof(System.AssemblyLoadEventArgs).FullName, EventDefinitionExtensions.GetEventArgsType(eventRef.EventType).FullName);
         }
 
-        #endregion
+        #endregion GetEventArgsType
     }
 }

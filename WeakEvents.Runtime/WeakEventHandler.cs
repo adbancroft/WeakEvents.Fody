@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace WeakEvents.Runtime
 {
@@ -32,10 +31,11 @@ namespace WeakEvents.Runtime
 
         // The open delegate and the WEAK reference which we will use to invoke the open delegate.
         private readonly OpenEventHandler _openHandler;
+
 #if NET45
         private readonly WeakReference<TSubscriber> _target; // Appears to be slighty faster than non-generic WeakReference
 #else
-        private readonly WeakReference _target; 
+        private readonly WeakReference _target;
 #endif
 
         // Used to unsubscribe THIS INSTANCE from the source event
@@ -43,7 +43,7 @@ namespace WeakEvents.Runtime
 
         public WeakEventHandler(EventHandler<TEventArgs> strongEventHandler, Action<EventHandler<TEventArgs>> unregister)
         {
-            if (unregister==null)
+            if (unregister == null)
             {
                 throw new ArgumentNullException("unregister");
             }
@@ -69,7 +69,7 @@ namespace WeakEvents.Runtime
             get { return Invoke; }
         }
 
-        // This is the weak event handler that the source event calls. 
+        // This is the weak event handler that the source event calls.
         // We simply forward the call to the real event handler if it hasn't been GC'd.
         private void Invoke(object sender, TEventArgs e)
         {
@@ -81,11 +81,11 @@ namespace WeakEvents.Runtime
             // No strong reference, so the target must have been GC'd.
             else if (_unregister != null)
             {
-                // At this point this WeakEventHandler<,> instance is now only kept alive by a strong 
+                // At this point this WeakEventHandler<,> instance is now only kept alive by a strong
                 // reference from the event handler. So unregister this instance from the event handler
                 // so it can be garbage colleced.
                 //
-                // This implies that if the event is never invoked there will be a small memory leak due to 
+                // This implies that if the event is never invoked there will be a small memory leak due to
                 // dangling WeakEventHandler<,> instance(s).
                 _unregister(Invoke);
                 _unregister = null;
@@ -99,7 +99,7 @@ namespace WeakEvents.Runtime
         /// <returns><code>true</code> if this instance is an equivalent weak event handler;<code>false</code> otherwise.</returns>
         public bool IsHandlerFor(EventHandler<TEventArgs> strongEventHandler)
         {
-            if (strongEventHandler==null)
+            if (strongEventHandler == null)
             {
                 throw new ArgumentNullException("strongEventHandler");
             }

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 using WeakEvents.Fody.IlEmit.StandardIl;
 
 namespace WeakEvents.Fody.IlEmit.Other
 {
     // Emit IL for a call to Delegate.Remove(itemToRemoveFrom, itemToRemove)
-    class EmitDelegateRemove : IlEmitterBase
+    internal class EmitDelegateRemove : IlEmitterBase
     {
         private readonly IlEmitter _inner;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using WeakEvents;
-namespace AssemblyToProcessDotNet4
+﻿namespace AssemblyToProcessDotNet4
 {
     //[ImplementWeakEvents] // Attribute can't be applied to interface
     internal interface Interface

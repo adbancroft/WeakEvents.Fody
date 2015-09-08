@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WeakEvents;
 
 namespace WeakEventPerformanceTester
 {
-    class EventTarget
+    internal class EventTarget
     {
         public void OnEventHandler(object sender, EventArgs args)
         {
@@ -16,15 +12,17 @@ namespace WeakEventPerformanceTester
         }
     }
 
-    interface IEventSource
+    internal interface IEventSource
     {
         event EventHandler<EventArgs> GenericEvent;
+
         void InvokeEvent(EventArgs args);
     }
 
-    class StrongEventSource : IEventSource
+    internal class StrongEventSource : IEventSource
     {
         public event EventHandler<EventArgs> GenericEvent;
+
         public void InvokeEvent(EventArgs args)
         {
             GenericEvent(this, args);
@@ -32,16 +30,17 @@ namespace WeakEventPerformanceTester
     }
 
     [ImplementWeakEvents]
-    class WeakEventSource : IEventSource
+    internal class WeakEventSource : IEventSource
     {
         public event EventHandler<EventArgs> GenericEvent;
+
         public void InvokeEvent(EventArgs args)
         {
             GenericEvent(this, args);
         }
     }
 
-    class Program
+    internal class Program
     {
         private const int numEvents = 2000;
         private const int numFiring = 5000;
@@ -105,7 +104,7 @@ namespace WeakEventPerformanceTester
             TestHandler(new WeakEventSource());
         }
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var p = new Program();
 

@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // OpCodes.Call
-    class EmitCall : IlEmitterBase
+    internal class EmitCall : IlEmitterBase
     {
         private readonly IlEmitter _methodParameters;
         private readonly MethodReference _targetMethod;
@@ -21,7 +21,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         public override IEnumerable<Instruction> Emit()
         {
             return EmitPreceeding().Concat(_methodParameters.Emit())
-                                   .Concat(new [] { Instruction.Create(OpCodes.Call, _targetMethod) });
+                                   .Concat(new[] { Instruction.Create(OpCodes.Call, _targetMethod) });
         }
     }
 

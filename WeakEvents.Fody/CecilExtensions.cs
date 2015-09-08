@@ -5,7 +5,7 @@ using Mono.Cecil.Rocks;
 
 namespace WeakEvents.Fody
 {
-    static class CecilExtensions
+    internal static class CecilExtensions
     {
         // Takes a method from an *open* generic type and creates a method on a *closed* generic type
         // E.g. Action<T>.ctor(Object, IntPtr) to Action<EventArgs>.ctor(Object, IntPtr)

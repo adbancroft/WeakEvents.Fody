@@ -4,11 +4,11 @@ namespace WeakEvents.Runtime
 {
     /// <summary>
     /// A helper class to convert between delegate types, modeled after System.Convert.
-    /// 
-    /// Delegates with exactly the same parameters and return type are not compatible. 
-    /// Specifically, you cannot cast a delegate to a delegate of another type even if 
+    ///
+    /// Delegates with exactly the same parameters and return type are not compatible.
+    /// Specifically, you cannot cast a delegate to a delegate of another type even if
     /// they have the same parameters and return type. Use this class instead.
-    /// 
+    ///
     /// Inspired by http://code.logos.com/blog/2008/07/casting_delegates.html
     /// </summary>
     public static class DelegateConvert
@@ -16,11 +16,11 @@ namespace WeakEvents.Runtime
         /// <summary>
         /// Convert the source delegate to a different delegate type
         /// </summary>
-        /// <example>  
-        /// <code> 
+        /// <example>
+        /// <code>
         /// DelegateConvert.ChangeType&lt;EventHandler&lt;PropertyChangedEventArgs&gt;&gt;(new PropertyChangedEventHandler(...))
-        /// </code> 
-        /// </example> 
+        /// </code>
+        /// </example>
         /// <typeparam name="T">Type of delegate to convert to</typeparam>
         /// <param name="source">Delegate to convert</param>
         /// <returns>A new delegate of the appropriate type</returns>
@@ -43,7 +43,7 @@ namespace WeakEvents.Runtime
             {
                 return null;
             }
-            if (type==null)
+            if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
@@ -67,8 +67,8 @@ namespace WeakEvents.Runtime
             catch (ArgumentException e)
             {
                 // Uh oh, incompatible delegate types.
-               throw new InvalidCastException("Failed to convert delegate", e);
-            }            
+                throw new InvalidCastException("Failed to convert delegate", e);
+            }
         }
     }
 }

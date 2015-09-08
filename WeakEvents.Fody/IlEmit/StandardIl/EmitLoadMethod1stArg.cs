@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // Loads the 1st method argument, accounting for the static modifier
-    class EmitLoadMethod1stArg : IlEmitterBase
+    internal class EmitLoadMethod1stArg : IlEmitterBase
     {
         public EmitLoadMethod1stArg(IlEmitter preceedingCode)
             : base(preceedingCode)

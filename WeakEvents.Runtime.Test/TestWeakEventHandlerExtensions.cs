@@ -1,7 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Specialized;
-using System.ComponentModel;
 
 namespace WeakEvents.Runtime.Test
 {
@@ -9,12 +7,16 @@ namespace WeakEvents.Runtime.Test
     [TestClass]
     public class TestWeakEventHandlerExtensions
     {
-        class Stub1
+        private class Stub1
         {
             public EventHandler<EventArgs> StubEvent;
 
             public int FireCount;
-            public void Handler(object sender, EventArgs args) { ++FireCount; }
+
+            public void Handler(object sender, EventArgs args)
+            {
+                ++FireCount;
+            }
         }
 
         private static void StaticHandler(object o, EventArgs args)
@@ -83,13 +85,13 @@ namespace WeakEvents.Runtime.Test
             Assert.AreEqual(1, s1.FireCount);
         }
 
-        #endregion
+        #endregion Makeweak<T> - EventHandler<EventArgs>
 
         #region FindWeak<T> - EventHandler<EventArgs>
 
         [TestMethod]
         public void FindWeakT_NullDelegate_ReturnsHandler()
-        { 
+        {
             var s1 = new Stub1();
             EventHandler<EventArgs> handler = s1.Handler;
             Assert.IsNull(s1.StubEvent);
@@ -131,10 +133,12 @@ namespace WeakEvents.Runtime.Test
             Assert.AreSame(handler, WeakEventHandlerExtensions.FindWeak<EventArgs>(s1.StubEvent, handler));
         }
 
-        class WeakEventHandlerMock<TArgs> : IWeakEventHandler<TArgs>
+        private class WeakEventHandlerMock<TArgs> : IWeakEventHandler<TArgs>
             where TArgs : EventArgs
         {
-            protected void Invoke(object sender, TArgs args) { }
+            protected void Invoke(object sender, TArgs args)
+            {
+            }
 
             public EventHandler<TArgs> HandlerT { get { return Invoke; } }
 
@@ -159,6 +163,6 @@ namespace WeakEvents.Runtime.Test
             Assert.AreSame(weakMock.LastIsHandlerFor, strongHandler);
         }
 
-        #endregion
+        #endregion FindWeak<T> - EventHandler<EventArgs>
     }
 }

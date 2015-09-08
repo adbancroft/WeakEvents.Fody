@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
 using Mono.Collections.Generic;
 
 namespace WeakEvents.Fody
@@ -13,13 +10,13 @@ namespace WeakEvents.Fody
         // Will log an MessageImportance.Normal message to MSBuild.
         public Action<string> LogDebug { get; set; }
 
-        // Will log an MessageImportance.High message to MSBuild. 
+        // Will log an MessageImportance.High message to MSBuild.
         public Action<string> LogInfo { get; set; }
 
-        // Will log an warning message to MSBuild. 
+        // Will log an warning message to MSBuild.
         public Action<string> LogWarning { get; set; }
 
-        // Will log an error message to MSBuild. 
+        // Will log an error message to MSBuild.
         public Action<string> LogError { get; set; }
 
         // An instance of Mono.Cecil.ModuleDefinition for processing

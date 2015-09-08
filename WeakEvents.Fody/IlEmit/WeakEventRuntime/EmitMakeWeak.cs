@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using WeakEvents.Fody.IlEmit.StandardIl;
@@ -9,7 +7,7 @@ using WeakEvents.Fody.IlEmit.StandardIl;
 namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 {
     // WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<T>()
-    class EmitMakeWeak : IlEmitterBase
+    internal class EmitMakeWeak : IlEmitterBase
     {
         private readonly IlEmitter _inner;
 

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
-using WeakEvents.Fody;
 
 namespace WeakEvents.Fody.Test
 {
-
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class WeaverHelper
     {

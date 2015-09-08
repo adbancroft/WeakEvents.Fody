@@ -1,15 +1,9 @@
-﻿using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
-using WeakEvents.Fody.IlEmit;
-using WeakEvents.Fody.IlEmit.Other;
-using WeakEvents.Fody.IlEmit.StandardIl;
-using WeakEvents.Fody.IlEmit.WeakEventRuntime;
 
 namespace WeakEvents.Fody
 {
-    class EventWeaver
+    internal class EventWeaver
     {
         private readonly ModuleDefinition _moduleDef;
         private readonly ILogger _logger;

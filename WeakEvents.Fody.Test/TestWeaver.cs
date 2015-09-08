@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestInterfaces;
 
@@ -13,13 +12,15 @@ namespace WeakEvents.Fody.Test
         private static WeaverHelper _weaverHelper;
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-        class EventTarget
+        private class EventTarget
         {
             public int FireCount;
+
             public void EventHandler(object o, EventArgs args)
             {
                 ++FireCount;
             }
+
             public void EventHandler(object o, int args)
             {
                 ++FireCount;
@@ -59,11 +60,11 @@ namespace WeakEvents.Fody.Test
             target = null;
             System.GC.Collect();
             Assert.IsNull(wr.Target);
-        
+
             // Fire the event again to force clean up of the weak event handler instance
             // There is no way to check that clean up, however this will confirm the woven IL is correct
             fireEvent(source);
-            
+
             // Keep the source alive until here: if it's GC'd this test will be invalid.
             System.GC.KeepAlive(source);
         }
@@ -141,7 +142,7 @@ namespace WeakEvents.Fody.Test
                 source => source.IsBasicEventSubscribed
             );
         }
-        
+
         [TestMethod]
         public void Test_NonGenericEvent_Subscribe_IsWeak()
         {

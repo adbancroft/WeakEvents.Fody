@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -8,7 +7,7 @@ using WeakEvents.Fody.IlEmit.StandardIl;
 namespace WeakEvents.Fody.IlEmit.Other
 {
     // Emit IL for a call to typeof(targetType)
-    class EmitTypeOf : IlEmitterBase
+    internal class EmitTypeOf : IlEmitterBase
     {
         private readonly IlEmitter _inner;
 

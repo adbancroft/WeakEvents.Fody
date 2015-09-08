@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WeakEvents.Runtime;
 using System.ComponentModel;
-using System.Collections.Specialized;
+using WeakEvents.Runtime;
 
 namespace ReferenceAssembly
 {
@@ -21,7 +16,9 @@ namespace ReferenceAssembly
             var realHandler = (EventHandler)DelegateConvert.ChangeType(weh, typeof(EventHandler));
             _WillBeWeak1 = (EventHandler)Delegate.Remove(_WillBeWeak1, realHandler);
         }
+
         private EventHandler _WillBeWeak1;
+
         public event EventHandler WillBeWeak1
         {
             add
@@ -36,7 +33,7 @@ namespace ReferenceAssembly
                 do
                 {
                     handler2 = handler;
-                    EventHandler handler3 = (EventHandler) Delegate.Combine(handler2, weakEh);
+                    EventHandler handler3 = (EventHandler)Delegate.Combine(handler2, weakEh);
                     handler = System.Threading.Interlocked.CompareExchange<EventHandler>(ref this._WillBeWeak1, handler3, handler2);
                 }
                 while (handler != handler2);
@@ -58,6 +55,7 @@ namespace ReferenceAssembly
                 while (handler != handler2);
             }
         }
+
         public void FireWillBeWeak1()
         {
             _WillBeWeak1(this, new EventArgs());
@@ -73,6 +71,7 @@ namespace ReferenceAssembly
         }
 
         private EventHandler<AssemblyLoadEventArgs> _eht;
+
         public event EventHandler<AssemblyLoadEventArgs> EHT
         {
             add
@@ -102,6 +101,7 @@ namespace ReferenceAssembly
         }
 
         private static EventHandler<AssemblyLoadEventArgs> _staticEht;
+
         public static event EventHandler<AssemblyLoadEventArgs> StaticEhT
         {
             add
@@ -113,7 +113,7 @@ namespace ReferenceAssembly
             remove
             {
                 EventHandler<AssemblyLoadEventArgs> handler2;
-                EventHandler<AssemblyLoadEventArgs> handler =_staticEht;
+                EventHandler<AssemblyLoadEventArgs> handler = _staticEht;
                 EventHandler<AssemblyLoadEventArgs> weakEh = _staticEht.FindWeak(value);
                 do
                 {

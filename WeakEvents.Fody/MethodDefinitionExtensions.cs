@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
 using WeakEvents.Fody.IlEmit;
 
 namespace WeakEvents.Fody
 {
-    static class MethodDefinitionExtensions
+    internal static class MethodDefinitionExtensions
     {
         public static int InsertInstructions(this MethodDefinition method, IlEmitter weakHandler, int insertPoint)
         {

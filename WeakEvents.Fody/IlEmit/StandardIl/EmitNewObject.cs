@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // OpCodes.Newobj
-    class EmitNewObject : IlEmitterBase
+    internal class EmitNewObject : IlEmitterBase
     {
         private readonly IlEmitter _ctorParameters;
         private readonly MethodReference _ctor;

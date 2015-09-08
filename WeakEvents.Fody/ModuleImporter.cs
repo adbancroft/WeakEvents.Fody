@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
@@ -8,7 +7,7 @@ using WeakEvents.Runtime;
 namespace WeakEvents.Fody
 {
     // Central place to import items into the module.
-    class ModuleImporter
+    internal class ModuleImporter
     {
         private readonly ModuleDefinition _moduleDef;
         private readonly Lazy<CustomAttribute> _compilerGeneratedAttribute;
@@ -48,7 +47,7 @@ namespace WeakEvents.Fody
             TypeReference eventArgsType = _moduleDef.Import(genericArg);
             return EventHandlerT.MakeGenericInstanceType(eventArgsType);
         }
-        
+
         // Delegate.Remove
         public MethodReference DelegateRemove { get { return _delegateRemove.Value; } }
 
@@ -62,8 +61,8 @@ namespace WeakEvents.Fody
         public MethodReference OpenFindWeakT { get { return _openFindWeakT.Value; } }
 
         // WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<T>
-        public MethodReference OpenMakeWeakT { get { return _loadOpenMakeWeakT.Value; } }        
-        
+        public MethodReference OpenMakeWeakT { get { return _loadOpenMakeWeakT.Value; } }
+
         private CustomAttribute LoadCompilerGeneratedAttribute()
         {
             var compilerGeneratedDefinition = _moduleDef.Import(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute));
@@ -84,19 +83,19 @@ namespace WeakEvents.Fody
 
         private MethodReference LoadDelegateRemoveMethodDefinition()
         {
-            System.Reflection.MethodInfo remove = typeof(Delegate).GetMethod("Remove", new [] { typeof(Delegate), typeof(Delegate) });
+            System.Reflection.MethodInfo remove = typeof(Delegate).GetMethod("Remove", new[] { typeof(Delegate), typeof(Delegate) });
             return _moduleDef.Import(remove);
         }
 
         private MethodReference LoadGetTypeFromHandle()
         {
-            System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new [] { typeof(RuntimeTypeHandle) });
+            System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new[] { typeof(RuntimeTypeHandle) });
             return _moduleDef.Import(getTypeFromHandleReflect);
         }
 
         private MethodReference LoadDelegateConvertChangeType()
         {
-            System.Reflection.MethodInfo changeType = typeof(DelegateConvert).GetMethod("ChangeType", new [] { typeof(Delegate), typeof(Type) });
+            System.Reflection.MethodInfo changeType = typeof(DelegateConvert).GetMethod("ChangeType", new[] { typeof(Delegate), typeof(Type) });
             return _moduleDef.Import(changeType);
         }
 

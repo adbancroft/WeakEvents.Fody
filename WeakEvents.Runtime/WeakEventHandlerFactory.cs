@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace WeakEvents.Runtime
 {
@@ -44,7 +44,7 @@ namespace WeakEvents.Runtime
                                                 });
         }
 
-        // The ConstructorInfo cache. 
+        // The ConstructorInfo cache.
         // Since this is a static generic class, there will be one instance per class generic argument. So no need
         // to key on TCustomArgs.
         // See http://stackoverflow.com/questions/3037203/are-static-members-of-a-generic-class-tied-to-the-specific-instance

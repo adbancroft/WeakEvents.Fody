@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WeakEvents.Runtime.Test
@@ -22,7 +20,7 @@ namespace WeakEvents.Runtime.Test
             EventHandler d = (object o, EventArgs args) => { ++invokeCounter; };
 
             EventHandler<EventArgs> dt = DelegateConvert.ChangeType<EventHandler<EventArgs>>(d);
-            
+
             Assert.IsNotNull(dt);
             Assert.AreNotSame(d, dt);
             d(this, new EventArgs());

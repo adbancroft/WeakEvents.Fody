@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WeakEvents.Runtime;
 
 namespace WeakEvents.Runtime.Test
 {
@@ -8,16 +7,25 @@ namespace WeakEvents.Runtime.Test
     [TestClass]
     public class TestWeakEventHandler
     {
-        class Stub1
+        private class Stub1
         {
             public int FireCount;
-            public void Handler(object sender, EventArgs args) { ++FireCount; }
-            public void Handler2(object sender, EventArgs args) { }
+
+            public void Handler(object sender, EventArgs args)
+            {
+                ++FireCount;
+            }
+
+            public void Handler2(object sender, EventArgs args)
+            {
+            }
         }
 
-        class Stub2
+        private class Stub2
         {
-            public void Handler(object sender, EventArgs args) { }
+            public void Handler(object sender, EventArgs args)
+            {
+            }
         }
 
         [TestMethod]

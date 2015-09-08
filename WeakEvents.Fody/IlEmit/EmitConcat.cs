@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody.IlEmit
 {
     // Concatenate emitters
-    class EmitConcat : IlEmitterBase
+    internal class EmitConcat : IlEmitterBase
     {
         private IlEmitter _second;
 

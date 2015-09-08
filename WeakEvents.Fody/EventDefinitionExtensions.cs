@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -18,7 +17,7 @@ namespace WeakEvents.Fody
         {
             // There is no direct link from an event to it's backing delegate field - in fact, there doesn't have to be a backing delegate.
             //
-            // So we have to use heuristics.       
+            // So we have to use heuristics.
             var candidateFields = eventt.DeclaringType.Fields.Where(f =>
             {
                 // Find all fields:
@@ -51,7 +50,7 @@ namespace WeakEvents.Fody
             return (i.OpCode.Code == Code.Ldfld || i.OpCode.Code == Code.Ldsfld) && i.Operand.Equals(field);
         }
 
-        #endregion
+        #endregion GetEventDelegate
 
         #region GetEventArgsType
 
@@ -73,7 +72,7 @@ namespace WeakEvents.Fody
             return genericInstance == null ? null : genericInstance.GenericArguments[0];
         }
 
-        #endregion
+        #endregion GetEventArgsType
 
         #region IsValidEventDelegate
 
@@ -128,7 +127,7 @@ namespace WeakEvents.Fody
             return type.BaseType.FullName.Equals(MulticastDelegateName);
         }
 
-        #endregion
+        #endregion IsValidEventDelegate
 
         private static string SysObjectName = typeof(System.Object).FullName;
         private static string MulticastDelegateName = typeof(System.MulticastDelegate).FullName;

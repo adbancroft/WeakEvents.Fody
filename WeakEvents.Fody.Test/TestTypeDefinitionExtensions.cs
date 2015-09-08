@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
-using WeakEvents.Fody;
 
 namespace WeakEvents.Fody.Test
 {
@@ -11,7 +9,6 @@ namespace WeakEvents.Fody.Test
     public class TestTypeDefinitionExtensions
     {
         private ModuleDefinition _moduleDef;
-
 
         [TestInitialize]
         public void LoadTypes()
@@ -43,6 +40,6 @@ namespace WeakEvents.Fody.Test
         public void IsTypeToProcess_Valid_True()
         {
             Assert.IsTrue(TypeDefinitionExtensions.IsTypeToProcess(_moduleDef.Types.Single(t => t.FullName.Equals(typeof(EventWithAttribute).FullName))));
-        }        
+        }
     }
 }

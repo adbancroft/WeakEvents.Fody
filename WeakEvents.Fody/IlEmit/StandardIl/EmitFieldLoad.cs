@@ -6,7 +6,7 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // OpCodes.Ldfld (or Ldsfld is method is static)
-    class EmitFieldLoad : IlEmitterBase
+    internal class EmitFieldLoad : IlEmitterBase
     {
         private readonly FieldReference _field;
 
@@ -20,12 +20,12 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
         {
             if (Method.IsStatic)
             {
-                return EmitPreceeding().Concat(new[] { 
+                return EmitPreceeding().Concat(new[] {
                     Instruction.Create(OpCodes.Ldsfld, _field)
                 });
             }
 
-            return EmitPreceeding().Concat(new[] { 
+            return EmitPreceeding().Concat(new[] {
                 Instruction.Create(OpCodes.Ldarg_0),
                 Instruction.Create(OpCodes.Ldfld, _field)
             });

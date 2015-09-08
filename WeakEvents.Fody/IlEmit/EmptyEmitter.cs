@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -7,7 +6,7 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit
 {
     // Empty emitter. Will usually be the root of an emitter chain.
-    class EmptyEmitter : IlEmitter
+    internal class EmptyEmitter : IlEmitter
     {
         private readonly MethodDefinition _method;
         private readonly ModuleImporter _importer;
@@ -16,6 +15,7 @@ namespace WeakEvents.Fody.IlEmit
             : this(template.Method, template.Importer)
         {
         }
+
         public EmptyEmitter(MethodDefinition method, ModuleImporter importer)
         {
             _method = method;
@@ -31,7 +31,6 @@ namespace WeakEvents.Fody.IlEmit
         {
             get { return _method; }
         }
-
 
         public ModuleImporter Importer
         {

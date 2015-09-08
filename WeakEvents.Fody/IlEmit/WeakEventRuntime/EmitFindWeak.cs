@@ -7,7 +7,7 @@ using WeakEvents.Fody.IlEmit.StandardIl;
 namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 {
     // WeakEvents.Runtime.WeakEventHandlerExtensions.FindWeak<T>(eventHandlerDelegate, strongEventHandler)
-    class EmitFindWeak : IlEmitterBase
+    internal class EmitFindWeak : IlEmitterBase
     {
         private readonly IlEmitter _inner;
 
