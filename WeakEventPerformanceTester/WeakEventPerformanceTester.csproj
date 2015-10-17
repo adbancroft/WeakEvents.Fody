@@ -75,9 +75,9 @@
     <Error Condition="!Exists('..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.29.3\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>rd /s/q $(SolutionDir)Tools
-md $(SolutionDir)Tools
-copy $(SolutionDir)WeakEvents.Fody\bin\Debug\*.dll $(SolutionDir)Tools</PreBuildEvent>
+    <PreBuildEvent>rd /s/q "$(SolutionDir)Tools"
+md "$(SolutionDir)Tools"
+copy "$(SolutionDir)WeakEvents.Fody\bin\Debug\*.dll" "$(SolutionDir)Tools"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
