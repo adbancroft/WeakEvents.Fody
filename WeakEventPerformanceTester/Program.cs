@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics;
 using WeakEvents;
 
@@ -45,10 +47,10 @@ namespace WeakEventPerformanceTester
         private const int numEvents = 2000;
         private const int numFiring = 5000;
 
-        private long AddHandler(IEventSource source, EventTarget target)
+        private long AddHandler(IEventSource source, IEnumerable<EventTarget> targets)
         {
             var stopwatch = Stopwatch.StartNew();
-            for (int n = 0; n < numEvents; ++n)
+            foreach (var target in targets)
             {
                 source.GenericEvent += target.OnEventHandler;
             }
@@ -68,10 +70,10 @@ namespace WeakEventPerformanceTester
             return stopwatch.ElapsedMilliseconds;
         }
 
-        private long RemoveHandler(IEventSource source, EventTarget target)
+        private long RemoveHandler(IEventSource source, IEnumerable<EventTarget> targets)
         {
             var stopwatch = Stopwatch.StartNew();
-            for (int n = 0; n < numEvents; ++n)
+            foreach (var target in targets)
             {
                 source.GenericEvent -= target.OnEventHandler;
             }
@@ -82,13 +84,13 @@ namespace WeakEventPerformanceTester
         private void TestHandler(IEventSource source)
         {
             Console.WriteLine("Test result");
-            var target = new EventTarget();
+            var targets = Enumerable.Range(0, numEvents).Select(i => new EventTarget()).ToList(); // ToList() is required in order to prevent targets being GC'd.
 
             var stopwatch = Stopwatch.StartNew();
 
-            Console.WriteLine("\tAdd: " + AddHandler(source, target) + "ms");
+            Console.WriteLine("\tAdd: " + AddHandler(source, targets) + "ms");
             Console.WriteLine("\tInvoke: " + InvokeHandler(source) + "ms");
-            Console.WriteLine("\tRemove: " + RemoveHandler(source, target) + "ms");
+            Console.WriteLine("\tRemove: " + RemoveHandler(source, targets) + "ms");
 
             stopwatch.Stop();
             Console.WriteLine("\tOverall: " + stopwatch.ElapsedMilliseconds + "ms");
