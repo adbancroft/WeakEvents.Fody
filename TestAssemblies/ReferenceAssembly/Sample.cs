@@ -78,7 +78,7 @@ namespace ReferenceAssembly
             {
                 Action<EventHandler<AssemblyLoadEventArgs>> unsubscribe = EHT_Weak_Unsubscribe;
                 EventHandler<AssemblyLoadEventArgs> weakEh = value.MakeWeak(unsubscribe);
-                _eht += value.MakeWeak(weh => _eht -= weh);
+                _eht += weakEh;
             }
             remove
             {
@@ -108,7 +108,7 @@ namespace ReferenceAssembly
             {
                 Action<EventHandler<AssemblyLoadEventArgs>> unsubscribe = StaticEhT_Weak_Unsubscribe;
                 EventHandler<AssemblyLoadEventArgs> weakEh = value.MakeWeak(unsubscribe);
-                _staticEht += value.MakeWeak(weh => _staticEht -= weh);
+                _staticEht += weakEh;
             }
             remove
             {

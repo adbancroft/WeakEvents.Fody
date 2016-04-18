@@ -20,6 +20,7 @@ namespace WeakEvents.Fody
         public Action<string> LogError { get; set; }
 
         // An instance of Mono.Cecil.ModuleDefinition for processing
+        [CLSCompliant(false)]
         public ModuleDefinition ModuleDefinition { get; set; }
 
         public ModuleWeaver()

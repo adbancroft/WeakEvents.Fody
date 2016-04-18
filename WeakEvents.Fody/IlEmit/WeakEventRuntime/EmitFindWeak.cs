@@ -9,9 +9,9 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
     // WeakEvents.Runtime.WeakEventHandlerExtensions.FindWeak<T>(eventHandlerDelegate, strongEventHandler)
     internal class EmitFindWeak : IlEmitterBase
     {
-        private readonly IlEmitter _inner;
+        private readonly ILEmitter _inner;
 
-        public EmitFindWeak(IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandlerDelegate, IlEmitter strongEventHandler)
+        public EmitFindWeak(ILEmitter preceedingCode, GenericInstanceType closedHandlerType, ILEmitter eventHandlerDelegate, ILEmitter strongEventHandler)
             : base(preceedingCode)
         {
             var openFindWeak = Importer.OpenFindWeakT;
@@ -26,7 +26,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter FindWeak(this IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandlerDelegate, IlEmitter strongEventHandler)
+        public static ILEmitter FindWeak(this ILEmitter preceedingCode, GenericInstanceType closedHandlerType, ILEmitter eventHandlerDelegate, ILEmitter strongEventHandler)
         {
             return new EmitFindWeak(preceedingCode, closedHandlerType, eventHandlerDelegate, strongEventHandler);
         }

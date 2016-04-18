@@ -68,6 +68,7 @@ namespace WeakEvents.Runtime
             // A null source event is legitimate: when unsubscribing from an event, callers do not check if
             // the event is null. I.e. the following is normal practice.
             //  class Dog
+#pragma warning disable S125 // Sections of code should not be "commented out"
             //  {
             //      public EventHandler<EventArgs> Barked;
             //  }
@@ -78,6 +79,7 @@ namespace WeakEvents.Runtime
             //{
             //    throw new ArgumentNullException("sourceHandler");
             //}
+#pragma warning restore S125 // Sections of code should not be "commented out"
 
             if (strongEventHandler == null)
             {

@@ -5,9 +5,9 @@ using Mono.Cecil.Cil;
 namespace WeakEvents.Fody.IlEmit.StandardIl
 {
     // Loads the 1st method argument, accounting for the static modifier
-    internal class EmitLoadMethod1stArg : IlEmitterBase
+    internal class EmitLoadMethodFirstArg : IlEmitterBase
     {
-        public EmitLoadMethod1stArg(IlEmitter preceedingCode)
+        public EmitLoadMethodFirstArg(ILEmitter preceedingCode)
             : base(preceedingCode)
         {
         }
@@ -25,9 +25,9 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter LoadMethod1stArg(this IlEmitter preceedingCode)
+        public static ILEmitter LoadMethodFirstArg(this ILEmitter preceedingCode)
         {
-            return new EmitLoadMethod1stArg(preceedingCode);
+            return new EmitLoadMethodFirstArg(preceedingCode);
         }
     }
 }

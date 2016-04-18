@@ -110,8 +110,5 @@ namespace WeakEvents.Fody
             System.Reflection.MethodInfo makeWeak = typeof(WeakEventHandlerExtensions).GetMethod("MakeWeak");
             return _moduleDef.Import(makeWeak);
         }
-
-        private static string SysObjectName = typeof(System.Object).FullName;
-        private static string IntPtrName = typeof(System.IntPtr).FullName;
     }
 }

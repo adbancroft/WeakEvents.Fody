@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.Globalization;
 using WeakEvents.Fody.IlEmit;
 using WeakEvents.Fody.IlEmit.Other;
 using WeakEvents.Fody.IlEmit.StandardIl;
@@ -24,16 +25,18 @@ namespace WeakEvents.Fody
 
         // Addes a new method to the class that can unsubscribe a weak event handler from the event delegate
         // E.g.
+#pragma warning disable S125 // Sections of code should not be "commented out"
         //      [CompilerGenerated]
         //      private void <event name>_Weak_Unsubscribe(EventHandler< eventargsType > weh)
         //      {
         //          this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
         //      }
+#pragma warning restore S125 // Sections of code should not be "commented out"
         // This is used as a call back by the weak event handler to clean up when the target is garbage collected.
         public MethodDefinition AddUnsubscribeMethod()
         {
             // private void <event name>_Weak_Unsubscribe(EventHandler< eventargsType > weh)
-            string unsubscribeMethodName = string.Format("<{0}>_Weak_Unsubscribe", _eventDelegate.Name);
+            string unsubscribeMethodName = string.Format(CultureInfo.InvariantCulture, "<{0}>_Weak_Unsubscribe", _eventDelegate.Name);
             MethodDefinition unsubscribe = new MethodDefinition(unsubscribeMethodName, GetUnsubscribeMethodAttributes(), _eventDelegate.Module.TypeSystem.Void);
             unsubscribe.Parameters.Add(new ParameterDefinition(_closedGenericEventHandler));
 
@@ -43,7 +46,7 @@ namespace WeakEvents.Fody
             _eventDelegate.DeclaringType.Methods.Add(unsubscribe);
 
             var rootEmitter = new EmptyEmitter(unsubscribe, _moduleimporter);
-            var weakHandler = rootEmitter.LoadMethod1stArg();
+            var weakHandler = rootEmitter.LoadMethodFirstArg();
             if (!_isGenericHandler)
             {
                 weakHandler = rootEmitter.DelegateConvert(weakHandler, _eventDelegate.FieldType);
@@ -60,12 +63,15 @@ namespace WeakEvents.Fody
             return unsubscribe;
         }
 
+
+#pragma warning disable S125 // Sections of code should not be "commented out"
         // <event type> b = (<event type>)FindWeak(<source delegate>, (EventHandler< eventargsType >)value);
-        public IlEmitter GenerateFindWeakIl(MethodDefinition method, VariableDefinition weakEventHandler)
+#pragma warning restore S125 // Sections of code should not be "commented out"
+        public ILEmitter GenerateFindWeakIl(MethodDefinition method, VariableDefinition weakEventHandler)
         {
             var rootEmitter = new EmptyEmitter(method, _moduleimporter);
 
-            var handler = rootEmitter.LoadMethod1stArg();
+            var handler = rootEmitter.LoadMethodFirstArg();
             if (!_isGenericHandler)
             {
                 handler = rootEmitter.DelegateConvert(handler, _closedGenericEventHandler);
@@ -80,13 +86,15 @@ namespace WeakEvents.Fody
         }
 
         // Wrap the method parameter in a weak event handler and store in a variable.
+#pragma warning disable S125 // Sections of code should not be "commented out"
         // i.e. <event type> b = (EventHandler)MakeWeak((EventHandler< eventargsType >)value, new Action<(EventHandler< eventargsType >)>(this.<woven unsubscribe action>));
-        public IlEmitter GenerateMakeWeakIl(MethodDefinition method, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
+#pragma warning restore S125 // Sections of code should not be "commented out"
+        public ILEmitter GenerateMakeWeakIl(MethodDefinition method, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
             var rootEmitter = new EmptyEmitter(method, _moduleimporter);
 
             var unsubscribeAction = rootEmitter.NewObject(_moduleimporter.ActionOpenCtor.MakeDeclaringTypeClosedGeneric(_closedGenericEventHandler), rootEmitter.LoadMethod(unsubscribe));
-            IlEmitter genericHandler = rootEmitter.LoadMethod1stArg();
+            ILEmitter genericHandler = rootEmitter.LoadMethodFirstArg();
             if (!_isGenericHandler)
             {
                 genericHandler = rootEmitter.DelegateConvert(genericHandler, _closedGenericEventHandler);

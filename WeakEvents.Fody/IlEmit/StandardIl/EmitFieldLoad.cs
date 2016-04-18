@@ -10,7 +10,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     {
         private readonly FieldReference _field;
 
-        public EmitFieldLoad(IlEmitter preceedingCode, FieldReference field)
+        public EmitFieldLoad(ILEmitter preceedingCode, FieldReference field)
             : base(preceedingCode)
         {
             _field = field;
@@ -34,7 +34,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter LoadField(this IlEmitter preceedingCode, FieldReference field)
+        public static ILEmitter LoadField(this ILEmitter preceedingCode, FieldReference field)
         {
             return new EmitFieldLoad(preceedingCode, field);
         }

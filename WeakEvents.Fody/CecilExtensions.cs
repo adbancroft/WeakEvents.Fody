@@ -31,7 +31,7 @@ namespace WeakEvents.Fody
         public static MethodReference MakeMethodClosedGeneric(this MethodReference self, params TypeReference[] arguments)
         {
             if (self.GenericParameters.Count != arguments.Length)
-                throw new ArgumentException();
+                throw new ArgumentException("Argument count mismatch", "self");
 
             var instance = new GenericInstanceMethod(self);
             Append(instance.GenericArguments, arguments);

@@ -7,7 +7,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     // OpCodes.Ret
     internal class EmitReturn : IlEmitterBase
     {
-        public EmitReturn(IlEmitter preceedingCode)
+        public EmitReturn(ILEmitter preceedingCode)
             : base(preceedingCode)
         {
         }
@@ -20,7 +20,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter Return(this IlEmitter preceedingCode)
+        public static ILEmitter Return(this ILEmitter preceedingCode)
         {
             return new EmitReturn(preceedingCode);
         }

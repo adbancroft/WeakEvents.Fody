@@ -106,7 +106,7 @@ namespace WeakEventPerformanceTester
             TestHandler(new WeakEventSource());
         }
 
-        private static void Main(string[] args)
+        private static void Main(/*string[] args*/)
         {
             var p = new Program();
 

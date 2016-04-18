@@ -9,9 +9,9 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
     // WeakEvents.Runtime.WeakEventHandlerExtensions.MakeWeak<T>()
     internal class EmitMakeWeak : IlEmitterBase
     {
-        private readonly IlEmitter _inner;
+        private readonly ILEmitter _inner;
 
-        public EmitMakeWeak(IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandler, IlEmitter unsubscribe)
+        public EmitMakeWeak(ILEmitter preceedingCode, GenericInstanceType closedHandlerType, ILEmitter eventHandler, ILEmitter unsubscribe)
             : base(preceedingCode)
         {
             var openMakeWeak = Importer.OpenMakeWeakT;
@@ -26,7 +26,7 @@ namespace WeakEvents.Fody.IlEmit.WeakEventRuntime
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter MakeWeak(this IlEmitter preceedingCode, GenericInstanceType closedHandlerType, IlEmitter eventHandler, IlEmitter unsubscribe)
+        public static ILEmitter MakeWeak(this ILEmitter preceedingCode, GenericInstanceType closedHandlerType, ILEmitter eventHandler, ILEmitter unsubscribe)
         {
             return new EmitMakeWeak(preceedingCode, closedHandlerType, eventHandler, unsubscribe);
         }

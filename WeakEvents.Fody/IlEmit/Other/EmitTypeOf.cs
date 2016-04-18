@@ -9,9 +9,9 @@ namespace WeakEvents.Fody.IlEmit.Other
     // Emit IL for a call to typeof(targetType)
     internal class EmitTypeOf : IlEmitterBase
     {
-        private readonly IlEmitter _inner;
+        private readonly ILEmitter _inner;
 
-        public EmitTypeOf(IlEmitter preceedingCode, TypeReference targetType)
+        public EmitTypeOf(ILEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)
         {
             _inner = new EmptyEmitter(preceedingCode).Call(Importer.GetTypeFromHandle, new EmptyEmitter(preceedingCode).LdToken(targetType));
@@ -25,7 +25,7 @@ namespace WeakEvents.Fody.IlEmit.Other
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter TypeOf(this IlEmitter preceedingCode, TypeReference targetType)
+        public static ILEmitter TypeOf(this ILEmitter preceedingCode, TypeReference targetType)
         {
             return new EmitTypeOf(preceedingCode, targetType);
         }

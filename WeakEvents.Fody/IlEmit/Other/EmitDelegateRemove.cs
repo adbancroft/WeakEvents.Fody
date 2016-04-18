@@ -8,9 +8,9 @@ namespace WeakEvents.Fody.IlEmit.Other
     // Emit IL for a call to Delegate.Remove(itemToRemoveFrom, itemToRemove)
     internal class EmitDelegateRemove : IlEmitterBase
     {
-        private readonly IlEmitter _inner;
+        private readonly ILEmitter _inner;
 
-        public EmitDelegateRemove(IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
+        public EmitDelegateRemove(ILEmitter preceedingCode, ILEmitter itemToRemoveFrom, ILEmitter itemToRemove)
             : base(preceedingCode)
         {
             _inner = new EmptyEmitter(preceedingCode).Call(Importer.DelegateRemove, itemToRemoveFrom, itemToRemove);
@@ -24,7 +24,7 @@ namespace WeakEvents.Fody.IlEmit.Other
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter CallDelegateRemove(this IlEmitter preceedingCode, IlEmitter itemToRemoveFrom, IlEmitter itemToRemove)
+        public static ILEmitter CallDelegateRemove(this ILEmitter preceedingCode, ILEmitter itemToRemoveFrom, ILEmitter itemToRemove)
         {
             return new EmitDelegateRemove(preceedingCode, itemToRemoveFrom, itemToRemove);
         }

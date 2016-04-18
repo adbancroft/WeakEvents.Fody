@@ -48,7 +48,7 @@ namespace WeakEvents.Runtime
                 throw new ArgumentNullException("type");
             }
             // Types are already compatible, no conversion required.
-            if (type.IsAssignableFrom(source.GetType()))
+            if (type.IsInstanceOfType(source))
             {
                 return source;
             }

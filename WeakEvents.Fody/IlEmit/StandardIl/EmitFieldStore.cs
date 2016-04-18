@@ -8,10 +8,10 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     // OpCodes.Stfld (or Stsfld is method is static)
     internal class EmitFieldStore : IlEmitterBase
     {
-        private readonly IlEmitter _fieldValue;
+        private readonly ILEmitter _fieldValue;
         private readonly FieldReference _field;
 
-        public EmitFieldStore(IlEmitter preceedingCode, FieldReference field, IlEmitter fieldValue)
+        public EmitFieldStore(ILEmitter preceedingCode, FieldReference field, ILEmitter fieldValue)
             : base(preceedingCode)
         {
             _fieldValue = fieldValue;
@@ -36,7 +36,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter StoreField(this IlEmitter preceedingCode, IlEmitter fieldValue, FieldReference field)
+        public static ILEmitter StoreField(this ILEmitter preceedingCode, ILEmitter fieldValue, FieldReference field)
         {
             return new EmitFieldStore(preceedingCode, field, fieldValue);
         }

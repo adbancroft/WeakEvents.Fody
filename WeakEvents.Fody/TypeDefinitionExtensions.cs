@@ -3,7 +3,7 @@ using Mono.Cecil;
 
 namespace WeakEvents.Fody
 {
-    public static class TypeDefinitionExtensions
+    internal static class TypeDefinitionExtensions
     {
         public static bool IsTypeToProcess(this TypeDefinition typeDefinition)
         {

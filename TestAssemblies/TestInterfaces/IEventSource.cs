@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 namespace TestInterfaces
 {
-    public delegate void CannotBeMadeWeak(object o, int i /* Not derived from EventArgs */);
+    public delegate void CannotBeMadeWeak(object sender, int args/* Not derived from EventArgs */);
 
     // Used by unit tests to access a weaved version of a class.
     public interface IEventSource
@@ -27,6 +27,7 @@ namespace TestInterfaces
         bool IsGenericEventSubscribed { get; }
 
         // The weaver should ignore this as the delegate doesn't conform to the standard (object, EventArgs) pattern
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
         event CannotBeMadeWeak CannotBeMadeWeak;
 
         void FireCannotBeMadeWeak();

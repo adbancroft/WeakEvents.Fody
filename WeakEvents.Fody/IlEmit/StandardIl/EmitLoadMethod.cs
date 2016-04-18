@@ -10,7 +10,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     {
         private readonly MethodReference _targetMethod;
 
-        public EmitLoadMethod(IlEmitter preceedingCode, MethodReference targetMethod)
+        public EmitLoadMethod(ILEmitter preceedingCode, MethodReference targetMethod)
             : base(preceedingCode)
         {
             _targetMethod = targetMethod;
@@ -29,7 +29,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter LoadMethod(this IlEmitter preceedingCode, MethodReference targetMethod)
+        public static ILEmitter LoadMethod(this ILEmitter preceedingCode, MethodReference targetMethod)
         {
             return new EmitLoadMethod(preceedingCode, targetMethod);
         }

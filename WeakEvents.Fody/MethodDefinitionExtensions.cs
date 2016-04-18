@@ -6,7 +6,7 @@ namespace WeakEvents.Fody
 {
     internal static class MethodDefinitionExtensions
     {
-        public static int InsertInstructions(this MethodDefinition method, IlEmitter weakHandler, int insertPoint)
+        public static int InsertInstructions(this MethodDefinition method, ILEmitter weakHandler, int insertPoint)
         {
             foreach (var i in weakHandler.Emit())
             {

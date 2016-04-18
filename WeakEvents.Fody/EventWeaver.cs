@@ -5,13 +5,11 @@ namespace WeakEvents.Fody
 {
     internal class EventWeaver
     {
-        private readonly ModuleDefinition _moduleDef;
         private readonly ILogger _logger;
         private readonly ModuleImporter _moduleImporter;
 
         public EventWeaver(ModuleDefinition moduleDef, ILogger logger)
         {
-            _moduleDef = moduleDef;
             _logger = logger;
             _moduleImporter = new ModuleImporter(moduleDef);
         }
@@ -43,14 +41,14 @@ namespace WeakEvents.Fody
             _logger.LogDebug("Finished processing event " + eventt.Name);
         }
 
-        private void ProcessRemoveMethod(MethodDefinition removeMethod, WeakEventWeaver weakEventWeaver)
+        private static void ProcessRemoveMethod(MethodDefinition removeMethod, WeakEventWeaver weakEventWeaver)
         {
             var weakEventHandler = weakEventWeaver.CreateEventHandlerVariable(removeMethod);
             var makeWeak = weakEventWeaver.GenerateFindWeakIl(removeMethod, weakEventHandler);
             int oldCodeIndex = removeMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
-            var instructionToReplace = GetMethodLoad1stArgumentCode(removeMethod);
+            var instructionToReplace = GetMethodLoadFirstArgumentCode(removeMethod);
             var instructions = removeMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
@@ -61,14 +59,14 @@ namespace WeakEvents.Fody
             }
         }
 
-        private void ProcessAddMethod(MethodDefinition addMethod, WeakEventWeaver weakEventWeaver)
+        private static void ProcessAddMethod(MethodDefinition addMethod, WeakEventWeaver weakEventWeaver)
         {
             var weakEventHandler = weakEventWeaver.CreateEventHandlerVariable(addMethod);
             var makeWeak = weakEventWeaver.GenerateMakeWeakIl(addMethod, weakEventWeaver.AddUnsubscribeMethod(), weakEventHandler);
             int oldCodeIndex = addMethod.InsertInstructions(makeWeak, 0);
 
             // Now replace any further use of the method parameter (Ldarg_1, or Ldarg_0 if static) with the weak event handler
-            var instructionToReplace = GetMethodLoad1stArgumentCode(addMethod);
+            var instructionToReplace = GetMethodLoadFirstArgumentCode(addMethod);
             var instructions = addMethod.Body.Instructions;
             for (int i = oldCodeIndex; i < instructions.Count; i++)
             {
@@ -80,7 +78,7 @@ namespace WeakEvents.Fody
         }
 
         // The opcode to load a methods 1st real argument varies depending on the static modifier.
-        private static Code GetMethodLoad1stArgumentCode(MethodDefinition method)
+        private static Code GetMethodLoadFirstArgumentCode(MethodDefinition method)
         {
             if (method.IsStatic)
             {

@@ -8,9 +8,9 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     internal class EmitStoreVariable : IlEmitterBase
     {
         private readonly VariableDefinition _variableDef;
-        private readonly IlEmitter _variableValueGenerator;
+        private readonly ILEmitter _variableValueGenerator;
 
-        public EmitStoreVariable(IlEmitter preceedingCode, VariableDefinition variableDef, IlEmitter variableValueGenerator)
+        public EmitStoreVariable(ILEmitter preceedingCode, VariableDefinition variableDef, ILEmitter variableValueGenerator)
             : base(preceedingCode)
         {
             _variableDef = variableDef;
@@ -26,7 +26,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter Store(this IlEmitter preceedingCode, VariableDefinition variableDef, IlEmitter variableValueGenerator)
+        public static ILEmitter Store(this ILEmitter preceedingCode, VariableDefinition variableDef, ILEmitter variableValueGenerator)
         {
             return new EmitStoreVariable(preceedingCode, variableDef, variableValueGenerator);
         }

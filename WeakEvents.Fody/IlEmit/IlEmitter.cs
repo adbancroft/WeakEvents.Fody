@@ -10,7 +10,7 @@ namespace WeakEvents.Fody.IlEmit
     // (by taking care of ordering IL and making code more readable).
     //
     // They emitters are designed to be chained together, ala LINQ.
-    internal interface IlEmitter
+    internal interface ILEmitter
     {
         // Call this to generate the instructions
         IEnumerable<Instruction> Emit();
@@ -23,12 +23,12 @@ namespace WeakEvents.Fody.IlEmit
     }
 
     // Base emitter that encapsulates common concepts
-    internal abstract class IlEmitterBase : IlEmitter
+    internal abstract class IlEmitterBase : ILEmitter
     {
-        private IlEmitter _preceedingCode;
+        private readonly ILEmitter _preceedingCode;
 
         // Code is linear: each emitter must have a preceeding emitter
-        protected IlEmitterBase(IlEmitter preceedingCode)
+        protected IlEmitterBase(ILEmitter preceedingCode)
         {
             _preceedingCode = preceedingCode;
         }

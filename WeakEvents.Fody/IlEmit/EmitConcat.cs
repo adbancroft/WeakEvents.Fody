@@ -7,9 +7,9 @@ namespace WeakEvents.Fody.IlEmit
     // Concatenate emitters
     internal class EmitConcat : IlEmitterBase
     {
-        private IlEmitter _second;
+        readonly private ILEmitter _second;
 
-        public EmitConcat(IlEmitter first, IlEmitter second)
+        public EmitConcat(ILEmitter first, ILEmitter second)
             : base(first)
         {
             _second = second;
@@ -23,7 +23,7 @@ namespace WeakEvents.Fody.IlEmit
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter Concat(this IlEmitter first, IlEmitter second)
+        public static ILEmitter Concat(this ILEmitter first, ILEmitter second)
         {
             return new EmitConcat(first, second);
         }

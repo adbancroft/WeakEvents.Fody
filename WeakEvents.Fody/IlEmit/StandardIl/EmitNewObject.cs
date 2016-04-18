@@ -8,10 +8,10 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     // OpCodes.Newobj
     internal class EmitNewObject : IlEmitterBase
     {
-        private readonly IlEmitter _ctorParameters;
+        private readonly ILEmitter _ctorParameters;
         private readonly MethodReference _ctor;
 
-        public EmitNewObject(IlEmitter preceedingCode, MethodReference ctor, params IlEmitter[] ctorParameters)
+        public EmitNewObject(ILEmitter preceedingCode, MethodReference ctor, params ILEmitter[] ctorParameters)
             : base(preceedingCode)
         {
             _ctorParameters = ctorParameters.Aggregate((prev, next) => prev.Concat(next));
@@ -27,7 +27,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter NewObject(this IlEmitter preceedingCode, MethodReference ctor, params IlEmitter[] ctorParameters)
+        public static ILEmitter NewObject(this ILEmitter preceedingCode, MethodReference ctor, params ILEmitter[] ctorParameters)
         {
             return new EmitNewObject(preceedingCode, ctor, ctorParameters);
         }

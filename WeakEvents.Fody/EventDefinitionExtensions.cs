@@ -4,7 +4,7 @@ using Mono.Cecil.Cil;
 
 namespace WeakEvents.Fody
 {
-    public static class EventDefinitionExtensions
+    internal static class EventDefinitionExtensions
     {
         #region GetEventDelegate
 

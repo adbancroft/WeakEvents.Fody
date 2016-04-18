@@ -48,6 +48,8 @@ namespace WeakEvents.Runtime
         // Since this is a static generic class, there will be one instance per class generic argument. So no need
         // to key on TCustomArgs.
         // See http://stackoverflow.com/questions/3037203/are-static-members-of-a-generic-class-tied-to-the-specific-instance
+#pragma warning disable S2743 // Static fields should not be used in generic types
         private static readonly IDictionary<Type, ConstructorInfo> _constructorInfoCache = new Dictionary<Type, ConstructorInfo>();
+#pragma warning restore S2743 // Static fields should not be used in generic types
     }
 }

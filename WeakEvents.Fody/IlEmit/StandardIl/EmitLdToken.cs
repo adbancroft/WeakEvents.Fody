@@ -10,7 +10,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
     {
         private readonly TypeReference _targetType;
 
-        public EmitLdToken(IlEmitter preceedingCode, TypeReference targetType)
+        public EmitLdToken(ILEmitter preceedingCode, TypeReference targetType)
             : base(preceedingCode)
         {
             _targetType = targetType;
@@ -24,7 +24,7 @@ namespace WeakEvents.Fody.IlEmit.StandardIl
 
     static partial class EmitterExtensions
     {
-        public static IlEmitter LdToken(this IlEmitter preceedingCode, TypeReference targetType)
+        public static ILEmitter LdToken(this ILEmitter preceedingCode, TypeReference targetType)
         {
             return new EmitLdToken(preceedingCode, targetType);
         }
