@@ -32,6 +32,7 @@ namespace WeakEvents.Fody
         //          this.EventDelegate = (<event type>) Delegate.Remove(this.EventDelegate, (<event type>)weh);
         //      }
 #pragma warning restore S125 // Sections of code should not be "commented out"
+
         // This is used as a call back by the weak event handler to clean up when the target is garbage collected.
         public MethodDefinition AddUnsubscribeMethod()
         {
@@ -63,10 +64,10 @@ namespace WeakEvents.Fody
             return unsubscribe;
         }
 
-
 #pragma warning disable S125 // Sections of code should not be "commented out"
         // <event type> b = (<event type>)FindWeak(<source delegate>, (EventHandler< eventargsType >)value);
 #pragma warning restore S125 // Sections of code should not be "commented out"
+
         public ILEmitter GenerateFindWeakIl(MethodDefinition method, VariableDefinition weakEventHandler)
         {
             var rootEmitter = new EmptyEmitter(method, _moduleimporter);
@@ -89,6 +90,7 @@ namespace WeakEvents.Fody
 #pragma warning disable S125 // Sections of code should not be "commented out"
         // i.e. <event type> b = (EventHandler)MakeWeak((EventHandler< eventargsType >)value, new Action<(EventHandler< eventargsType >)>(this.<woven unsubscribe action>));
 #pragma warning restore S125 // Sections of code should not be "commented out"
+
         public ILEmitter GenerateMakeWeakIl(MethodDefinition method, MethodDefinition unsubscribe, VariableDefinition weakEventHandler)
         {
             var rootEmitter = new EmptyEmitter(method, _moduleimporter);

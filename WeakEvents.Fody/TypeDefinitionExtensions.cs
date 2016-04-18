@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
+using System.Linq;
 
 namespace WeakEvents.Fody
 {

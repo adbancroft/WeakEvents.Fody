@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Mono.Cecil;
+using System;
 using System.IO;
 using System.Reflection;
-using Mono.Cecil;
 
 namespace WeakEvents.Fody.Test
 {

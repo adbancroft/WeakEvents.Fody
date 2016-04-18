@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.Collections.Generic;
+using System.Linq;
 using WeakEvents.Fody.IlEmit.StandardIl;
 
 namespace WeakEvents.Fody.IlEmit.Other

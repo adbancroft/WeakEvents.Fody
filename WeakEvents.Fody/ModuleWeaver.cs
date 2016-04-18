@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace WeakEvents.Fody
 {

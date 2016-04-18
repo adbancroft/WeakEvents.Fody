@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 using Mono.Cecil.Rocks;
+using System;
+using System.Collections.Generic;
 
 namespace WeakEvents.Fody
 {

@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
+using System.Linq;
 
 namespace WeakEvents.Fody.Test
 {
