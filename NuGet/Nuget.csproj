@@ -42,6 +42,8 @@
     <Copy SourceFiles="$(ProjectDir)uninstall.ps" DestinationFiles="$(SolutionDir)NuGetBuild\Tools\uninstall.ps1" />
     <Copy SourceFiles="$(SolutionDir)WeakEvents.Fody\bin\$(Configuration)\WeakEvents.Fody.dll" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <Copy SourceFiles="$(SolutionDir)WeakEvents.Fody\bin\$(Configuration)\WeakEvents.Fody.pdb" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(SolutionDir)WeakEvents\bin\$(Configuration)\WeakEvents.dll" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(SolutionDir)\WeakEvents.Runtime\bin\$(Configuration)\\WeakEvents.Runtime.dll" DestinationFolder="$(SolutionDir)NuGetBuild" />
     <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(SolutionDir)WeakEvents.Fody\bin\$(Configuration)\WeakEvents.Fody.dll" />
   </Target>
   <ItemGroup>
