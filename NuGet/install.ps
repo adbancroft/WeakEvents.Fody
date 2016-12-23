@@ -57,17 +57,12 @@ function Update-FodyConfig($addinName, $project)
     $xml.Save($fodyWeaversPath)
 }
 
-function Set-ReferenceCopyLocal($package, $project, $assembly, $copyLocal)
+function Set-ReferenceCopyLocal($project, $assembly, $copyLocal)
 {
-    Write-Host "Set-ReferencesCopyLocal $($package.Id) $($assembly) $($copyLocal)"
+    Write-Host "Set-ReferencesCopyLocal $($assembly) $($copyLocal)"
  
-    foreach ($reference in $project.Object.References)
-    {
-        if ($reference.Name.Equals($assembly))
-        {
-            $reference.CopyLocal = $copyLocal;
-        }
-    }
+	$dll = $project.Object.References | Where-Object {$_.Name.Equals($assembly)} | Select-Object -first 1
+	$dll.CopyLocal = $copyLocal
 }
 
 function UnlockWeaversXml($project)
@@ -87,5 +82,5 @@ RemoveForceProjectLevelHack $project
 
 Update-FodyConfig $package.Id.Replace(".Fody", "") $project
 
-Set-ReferenceCopyLocal $package $project "WeakEvents.dll" $false
-Set-ReferenceCopyLocal $package $project "WeakEvents.Runtime.dll" $true
+Set-ReferenceCopyLocal $project "WeakEvents" $false
+Set-ReferenceCopyLocal $project "WeakEvents.Runtime" $true
