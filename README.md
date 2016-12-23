@@ -1,6 +1,10 @@
 # WeakEvents.Fody: an add-in for [Fody](https://github.com/Fody/Fody/)
 ## Summary
 Automatic publishing of weak events via compile time code weaving and a supporting runtime library.
+## The NuGet package
+https://www.nuget.org/packages/WeakEvents.Fody/
+
+    PM>  Install-Package WeakEvents.Fody 
 ## Your Code
     [ImplementWeakEvents]
     public class ClassWithEvent
