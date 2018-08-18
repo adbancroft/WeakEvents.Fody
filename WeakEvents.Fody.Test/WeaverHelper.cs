@@ -18,8 +18,7 @@ namespace WeakEvents.Fody.Test
             BeforeAssemblyPath = Path.Combine(assemblyFolder, assemblyToProcess);
             AfterAssemblyPath = BeforeAssemblyPath.Replace(".dll", "2.dll");
 
-            File.Copy(BeforeAssemblyPath, AfterAssemblyPath, true);
-            var moduleDefinition = ModuleDefinition.ReadModule(AfterAssemblyPath, new ReaderParameters());
+            var moduleDefinition = ModuleDefinition.ReadModule(BeforeAssemblyPath);
             var weavingTask = new ModuleWeaver
             {
                 ModuleDefinition = moduleDefinition,

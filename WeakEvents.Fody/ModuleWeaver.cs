@@ -3,37 +3,16 @@ using Mono.Collections.Generic;
 using System;
 using System.Linq;
 
+using global::Fody;
+
 namespace WeakEvents.Fody
 {
-    public class ModuleWeaver : ILogger
+    using System.Collections.Generic;
+
+    public class ModuleWeaver : BaseModuleWeaver, ILogger
     {
-        // Will log an MessageImportance.Normal message to MSBuild.
-        public Action<string> LogDebug { get; set; }
-
-        // Will log an MessageImportance.High message to MSBuild.
-        public Action<string> LogInfo { get; set; }
-
-        // Will log an warning message to MSBuild.
-        public Action<string> LogWarning { get; set; }
-
-        // Will log an error message to MSBuild.
-        public Action<string> LogError { get; set; }
-
-        // An instance of Mono.Cecil.ModuleDefinition for processing
-        [CLSCompliant(false)]
-        public ModuleDefinition ModuleDefinition { get; set; }
-
-        public ModuleWeaver()
-        {
-            // Init logging delegates to make testing easier
-            LogDebug = m => { };
-            LogInfo = m => { };
-            LogWarning = m => { };
-            LogError = m => { };
-        }
-
         // Fody works by convention & will call this method to run the weaver.
-        public void Execute()
+        public override void Execute()
         {
             LogDebug("Beginning weak event weaving");
 
@@ -55,6 +34,11 @@ namespace WeakEvents.Fody
             CleanReferences();
 
             LogDebug("Finished weak event weaving");
+        }
+
+        public override IEnumerable<string> GetAssembliesForScanning()
+        {
+            yield break;
         }
 
         private void CleanReferences()

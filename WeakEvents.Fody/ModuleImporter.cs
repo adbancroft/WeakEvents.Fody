@@ -44,7 +44,7 @@ namespace WeakEvents.Fody
         // EventHandler<genericArg>
         public GenericInstanceType GetClosedEventHandlerT(TypeReference genericArg)
         {
-            TypeReference eventArgsType = _moduleDef.Import(genericArg);
+            TypeReference eventArgsType = _moduleDef.ImportReference(genericArg);
             return EventHandlerT.MakeGenericInstanceType(eventArgsType);
         }
 
@@ -65,50 +65,50 @@ namespace WeakEvents.Fody
 
         private CustomAttribute LoadCompilerGeneratedAttribute()
         {
-            var compilerGeneratedDefinition = _moduleDef.Import(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute));
-            var compilerGeneratedCtor = _moduleDef.Import(compilerGeneratedDefinition.Resolve().Methods.Single(m => m.IsConstructor && m.Parameters.Count == 0));
+            var compilerGeneratedDefinition = _moduleDef.ImportReference(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute));
+            var compilerGeneratedCtor = _moduleDef.ImportReference(compilerGeneratedDefinition.Resolve().Methods.Single(m => m.IsConstructor && m.Parameters.Count == 0));
             return new CustomAttribute(compilerGeneratedCtor);
         }
 
         private MethodReference LoadOpenActionTConstructor()
         {
-            var actionDefinition = _moduleDef.Import(typeof(System.Action<>)).Resolve();
-            return _moduleDef.Import(actionDefinition.Methods.Single(x => x.IsConstructor));
+            var actionDefinition = _moduleDef.ImportReference(typeof(System.Action<>)).Resolve();
+            return _moduleDef.ImportReference(actionDefinition.Methods.Single(x => x.IsConstructor));
         }
 
         private TypeReference LoadOpenEventHandlerT()
         {
-            return _moduleDef.Import(typeof(System.EventHandler<>));
+            return _moduleDef.ImportReference(typeof(System.EventHandler<>));
         }
 
         private MethodReference LoadDelegateRemoveMethodDefinition()
         {
             System.Reflection.MethodInfo remove = typeof(Delegate).GetMethod("Remove", new[] { typeof(Delegate), typeof(Delegate) });
-            return _moduleDef.Import(remove);
+            return _moduleDef.ImportReference(remove);
         }
 
         private MethodReference LoadGetTypeFromHandle()
         {
             System.Reflection.MethodInfo getTypeFromHandleReflect = typeof(Type).GetMethod("GetTypeFromHandle", new[] { typeof(RuntimeTypeHandle) });
-            return _moduleDef.Import(getTypeFromHandleReflect);
+            return _moduleDef.ImportReference(getTypeFromHandleReflect);
         }
 
         private MethodReference LoadDelegateConvertChangeType()
         {
             System.Reflection.MethodInfo changeType = typeof(DelegateConvert).GetMethod("ChangeType", new[] { typeof(Delegate), typeof(Type) });
-            return _moduleDef.Import(changeType);
+            return _moduleDef.ImportReference(changeType);
         }
 
         private MethodReference LoadOpenFindWeakT()
         {
             System.Reflection.MethodInfo findWeak = typeof(WeakEventHandlerExtensions).GetMethod("FindWeak");
-            return _moduleDef.Import(findWeak);
+            return _moduleDef.ImportReference(findWeak);
         }
 
         private MethodReference LoadOpenMakeWeakT()
         {
             System.Reflection.MethodInfo makeWeak = typeof(WeakEventHandlerExtensions).GetMethod("MakeWeak");
-            return _moduleDef.Import(makeWeak);
+            return _moduleDef.ImportReference(makeWeak);
         }
     }
 }
