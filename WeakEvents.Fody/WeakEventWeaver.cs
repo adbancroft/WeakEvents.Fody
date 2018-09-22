@@ -38,7 +38,9 @@ namespace WeakEvents.Fody
         {
             // private void <event name>_Weak_Unsubscribe(EventHandler< eventargsType > weh)
             string unsubscribeMethodName = string.Format(CultureInfo.InvariantCulture, "<{0}>_Weak_Unsubscribe", _eventDelegate.Name);
+#pragma warning disable CS0618 // Type or member is obsolete
             MethodDefinition unsubscribe = new MethodDefinition(unsubscribeMethodName, GetUnsubscribeMethodAttributes(), _eventDelegate.Module.TypeSystem.Void);
+#pragma warning restore CS0618 // Type or member is obsolete
             unsubscribe.Parameters.Add(new ParameterDefinition(_closedGenericEventHandler));
 
             // [CompilerGenerated]
