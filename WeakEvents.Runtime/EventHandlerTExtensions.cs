@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Reflection;
 
 namespace WeakEvents.Runtime
 {
@@ -104,12 +105,12 @@ namespace WeakEvents.Runtime
 
         private static bool IsAnonymousMethod(Delegate eventHandler)
         {
-            return eventHandler.Method.DeclaringType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Length != 0;
+            return eventHandler.GetMethodInfo().DeclaringType.GetTypeInfo().GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any();
         }
 
         private static bool IsInstanceMethod(Delegate eventHandler)
         {
-            return !eventHandler.Method.IsStatic && eventHandler.Target != null;
+            return !eventHandler.GetMethodInfo().IsStatic && eventHandler.Target != null;
         }
 
         private static object ExtractDelegateTarget(Delegate source)
@@ -125,7 +126,7 @@ namespace WeakEvents.Runtime
             // Is the method a weak event handler?
             public static bool IsWeakEventHandler(Delegate declaringType)
             {
-                return WehType.IsAssignableFrom(declaringType.Method.DeclaringType);
+                return WehType.GetTypeInfo().IsAssignableFrom(declaringType.GetMethodInfo().DeclaringType.GetTypeInfo());
             }
 
             // Performance - since this is a static generic class, there will be one instance per class generic argument.
