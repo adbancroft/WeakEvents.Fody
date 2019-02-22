@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace WeakEvents.Runtime
 {
@@ -57,7 +58,7 @@ namespace WeakEvents.Runtime
 #else
             _target = new WeakReference(strongEventHandler.Target);
 #endif
-            _openHandler = (OpenEventHandler)Delegate.CreateDelegate(typeof(OpenEventHandler), null, strongEventHandler.Method);
+            _openHandler = (OpenEventHandler)strongEventHandler.GetMethodInfo().CreateDelegate(typeof(OpenEventHandler), null);
             _unregister = unregister;
         }
 
@@ -110,7 +111,7 @@ namespace WeakEvents.Runtime
                 // Same strong target
                 && ReferenceEquals(target, strongEventHandler.Target)
                 // Same method
-                && _openHandler.Method.Equals(strongEventHandler.Method);
+                && _openHandler.GetMethodInfo().Equals(strongEventHandler.GetMethodInfo());
         }
 
         private bool TryGetTarget(out TSubscriber target)

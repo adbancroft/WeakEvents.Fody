@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeakEvents.Fody", "WeakEvents.Fody\WeakEvents.Fody.csproj", "{A537654E-0EDB-4055-B1E4-6471A069E577}"
 EndProject
@@ -81,5 +81,8 @@ Global
 		{5A323129-F8E7-4CD4-9381-72B397E8F471} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
 		{BAB6D718-E60B-4833-B968-F5B9F86B0063} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
 		{73236FCB-8DFA-4E2E-9C97-353051CD8A1A} = {BEFC57AC-9186-4B78-95A3-AB2BCF1A48E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2ACFE127-3033-4F82-B7EB-A5DF25669020}
 	EndGlobalSection
 EndGlobal

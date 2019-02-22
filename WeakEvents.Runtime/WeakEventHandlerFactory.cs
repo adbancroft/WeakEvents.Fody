@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -18,7 +19,7 @@ namespace WeakEvents.Runtime
         /// <param name="unsubscribe">An action which the weak event handler can use to unsubscribe from the source event</param>
         public static IWeakEventHandler<TCustomArgs> Create(EventHandler<TCustomArgs> eventHandler, Action<EventHandler<TCustomArgs>> unsubscribe)
         {
-            return (IWeakEventHandler<TCustomArgs>)GetConstructorInfo(eventHandler.Method.DeclaringType)
+            return (IWeakEventHandler<TCustomArgs>)GetConstructorInfo(eventHandler.GetMethodInfo().DeclaringType)
                                 .Invoke(new object[] { eventHandler, unsubscribe });
         }
 
@@ -38,10 +39,15 @@ namespace WeakEvents.Runtime
         private static ConstructorInfo CreateConstructorInfo(Type eventHandlerDeclaringType)
         {
             Type wehType = typeof(WeakEventHandler<,>).MakeGenericType(eventHandlerDeclaringType, typeof(TCustomArgs));
-            return wehType.GetConstructor(new[] {
-                                                    typeof (EventHandler<TCustomArgs>),
-                                                    typeof (Action<EventHandler<TCustomArgs>>)
-                                                });
+            return wehType.GetTypeInfo().DeclaredConstructors.First(ParametersMatch);
+        }
+
+        private static bool ParametersMatch(MethodBase mi)
+        {
+            var methodParams = mi.GetParameters();
+            return methodParams.Length == 2
+                && methodParams[0].ParameterType.Equals(typeof(EventHandler<TCustomArgs>))
+                && methodParams[1].ParameterType.Equals(typeof(Action<EventHandler<TCustomArgs>>));
         }
 
         // The ConstructorInfo cache.

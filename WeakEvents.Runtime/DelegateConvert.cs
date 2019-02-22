@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace WeakEvents.Runtime
 {
@@ -48,7 +49,7 @@ namespace WeakEvents.Runtime
                 throw new ArgumentNullException("type");
             }
             // Types are already compatible, no conversion required.
-            if (type.IsInstanceOfType(source))
+            if (type.GetTypeInfo().IsAssignableFrom(source.GetType().GetTypeInfo()))
             {
                 return source;
             }
@@ -58,8 +59,8 @@ namespace WeakEvents.Runtime
                 // Unwrap each delegate, create a delegate of the appropriate type and combine them all.
                 Delegate final = null;
                 foreach (Delegate d in source.GetInvocationList())
-                {
-                    final = Delegate.Combine(final, Delegate.CreateDelegate(type, d.Target, d.Method));
+                {                    
+                    final = Delegate.Combine(final, d.GetMethodInfo().CreateDelegate(type, d.Target));
                 }
 
                 return final;
